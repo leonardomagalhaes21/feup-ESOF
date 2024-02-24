@@ -17,6 +17,6 @@ FEUPreUSE is an innovative mobile application designed to revolutionize the way 
 ### PLANNED FEATURES
 
 - **Publication System**: Easily create and share posts featuring photos and detailed descriptions of items for trade in the following categories: Books, Clothing, Home Appliances, Electronics, Educational Materials and Miscellaneous.
-- **Chat Functionality**: Engage in seamless negotiations and trades with other users through our integrated chat feature, facilitating smooth communication and deal-making.
+- **Chat Functionality**: Engage in seamless negotiations and trades with other users through our integrated chat feature, facilitating smooth communication and deal-making. When a user shows interest in an item, they can open a chat with the seller, without the item becoming reserved. It remains the responsibility of the individuals involved to manage the availability of the item during conversation.
 - **Rating System**: Rate and review trade partners to share your trading experience and help build a trustworthy community.
 
