@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "746528078481",
+    "project_id": "feup-reuse",
+    "storage_bucket": "feup-reuse.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746528078481:android:eaad65ef1ff64927cedd30",
+        "android_client_info": {
+          "package_name": "com.example.feup_re_use"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0iqLg4evDqC2n67DAOrNog0PRaUCoY-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
