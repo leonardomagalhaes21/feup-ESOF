@@ -1,4 +1,4 @@
-# Software Engeneering - FEUPreUSE
+# Software Engeneering - FEUP-reUSE
 ### <p>2LEIC02T1</p>
 
 **Project Team**:
