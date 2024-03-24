@@ -1,16 +1,13 @@
 # User Stories for the development of FEUPreUSE
 
 
+* As a user, I want to view my own profile and profiles of other users, including their posts and other statistics, so that I can see posts based on the seller.
+* As a user, I want easy navigation between different sections or features within the app to enhance my overall user experience.
+* As a user, I want to take photos with my cellphone and use them to create posts.
+* As a user, I want to be able to search for open chats easily, so I can find the conversations I'm looking for.
 * As a student at FEUP, I want to use FEUPreUSE to find second-hand textbooks for my courses, so I can save money and reduce my environmental impact by reusing resources.
-
-* As a user, I want to have the ability to initiate communication with sellers/traders directly through FEUPreUSE, enabling seamless coordination for meeting arrangements and negotiation of prices.
-
-* As a seller listing items on FEUPreUSE, I want to receive notifications and messages from interested buyers, allowing for prompt responses and efficient coordination of sale details such as pricing and meeting arrangements.
-
-* As a seller on FEUPreUSE, I want to create detailed listings for the items I'm offering by publishing articles that include photos and written descriptions. This feature allows me to showcase the condition, features, and specifications of my items effectively, providing potential buyers with comprehensive information to make informed decisions about their trades.
-
-* As a seller on FEUPreUSE, I want to rate and review trade partners to share mytrading experience and help build a trustworthy community.
-
-* As a user on FEUPreUSE, I want to rate and review trade partners to share mytrading experience and help build a trustworthy community.
-
-* As a FEUPreUSE manager, I want acess to user ratings, feedback, and experiences, as well as reports on any bugs or errors encountered within the app, aiming to gather valuable insights into areas for improvement, address technical issues promptly, and prioritize feature enhancements based on user feedback. 
+* As a user, I want the ability to search for other users so that I can find products based on the seller.
+* As a user, I want to upload photos from my cellphone to create posts.
+* As a seller on FEUPreUSE, I want to rate and review trade partners to share my trading experience and help build a trustworthy community.
+* As a seller listing items, I want to create detailed listings for the items I'm offering by publishing articles that include photos and written descriptions, to showcase the condition and specifications of my items.
+* As a user, I want to have the ability to initiate communication with sellers/traders directly through FEUPreUSE, enabling seamless coordination for meeting arrangements.
