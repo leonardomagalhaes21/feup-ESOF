@@ -11,7 +11,7 @@
 
 **Overview**:
 
-FEUP-reUSE is an innovative mobile application designed to revolutionize the way you trade, primarily catering to the vibrant community of the Faculty of Engineering of the University of Porto (FEUP). Whether you're a student, faculty member, or staff, FEUPreUSE provides the perfect platform to connect with potential trade partners within the FEUP community. Whether you're looking to exchange books, clothes, home appliances, electronics, or educational materials, FEUPreUSE offers a user-friendly interface reminiscent of Instagram, making trading effortless and enjoyable. Plus, it's important to note that FEUPreUSE operates on a donation-only basis, ensuring that no money is involved in transactions, fostering a spirit of generosity and community within FEUP.
+FEUP-reUSE is an innovative mobile application designed to revolutionize the way you trade, primarily catering to the vibrant community of the Faculty of Engineering of the University of Porto (FEUP). Whether you're a student, faculty member, or staff, FEUP-reUSE provides the perfect platform to connect with potential trade partners within the FEUP community. Whether you're looking to exchange books, clothes, home appliances, electronics, or educational materials, FEUP-reUSE offers a user-friendly interface reminiscent of Instagram, making trading effortless and enjoyable. Plus, it's important to note that FEUP-reUSE operates on a donation-only basis, ensuring that no money is involved in transactions, fostering a spirit of generosity and community within FEUP.
 
 
 ### PLANNED FEATURES
