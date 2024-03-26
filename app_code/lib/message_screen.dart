@@ -25,29 +25,25 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final List<ChatMessage> _messages = []; // List to store chat messages
+  final List<ChatMessage> _messages = []; 
   final TextEditingController _textEditingController =
-      TextEditingController(); // Controller for the text input field
+      TextEditingController(); 
 
-  String _selectedRecipient = ''; // Variable to store the selected recipient
+  String _selectedRecipient = ''; 
 
-  // Function to send a message
   void _sendMessage() {
     String messageText = _textEditingController.text.trim();
     if (messageText.isNotEmpty && _selectedRecipient.isNotEmpty) {
-      // Create a new ChatMessage object and add it to the list of messages
       ChatMessage newMessage = ChatMessage(
-        sender: 'User', // For now, set the sender as 'User'
+        sender: 'User', 
         content: messageText,
         timestamp: DateTime.now(),
       );
       setState(() {
         _messages.add(newMessage);
       });
-      // Clear the text input field after sending the message
       _textEditingController.clear();
     } else {
-      // Show a snackbar if the recipient is not selected
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please select a recipient'),
@@ -56,7 +52,6 @@ class _MessageScreenState extends State<MessageScreen> {
     }
   }
 
-  // Function to handle recipient selection
   void _selectRecipient(String recipient) {
     setState(() {
       _selectedRecipient = recipient;
