@@ -1,47 +1,168 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
 import 'message_screen.dart';
+import 'dart:io';
+import 'dart:convert';
 
-
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late TextEditingController _nameController;
+  late TextEditingController _biographyController;
+  String _profileImageUrl = '';
+  final ImagePicker _imagePicker = ImagePicker();
+  User? _currentUser; // Store the current user
+
+  // Key for the CircleAvatar widget
+  final GlobalKey _avatarKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _biographyController = TextEditingController();
+    _getCurrentUser(); // Retrieve the current user
+  }
+
+  Future<void> _getCurrentUser() async {
+    _currentUser = FirebaseAuth.instance.currentUser;
+    if (_currentUser != null) {
+      loadUserProfile(); // Load user profile after getting the user
+    } else {
+      // Handle case where user is not logged in
+    }
+  }
+
+  Future<void> loadUserProfile() async {
+    try {
+      DocumentSnapshot userProfile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid) // Use the current user's ID
+          .get();
+      setState(() {
+        _nameController.text = userProfile['name'] ?? '';
+        _biographyController.text = userProfile['biography'] ?? '';
+        _profileImageUrl = userProfile['profileImageUrl'] ?? '';
+      });
+    } catch (e) {
+      print('Error loading user profile: $e');
+    }
+  }
+
+  Future<void> saveProfile() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid) // Use the current user's ID
+          .set({
+        'name': _nameController.text.trim(),
+        'biography': _biographyController.text.trim(),
+        'profileImageUrl': _profileImageUrl,
+      });
+
+      print('User profile updated successfully!');
+    } catch (e) {
+      print('Error updating user profile: $e');
+    }
+  }
+
+  Future<void> uploadImage() async {
+    final XFile? image =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    List<int> imageBytes = await image.readAsBytes();
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid) // Use the current user's ID
+          .update({
+        'profileImageBytes': imageBytes,
+      });
+
+      setState(() {
+        _profileImageUrl = 'data:image/jpeg;base64,${base64Encode(imageBytes)}';
+      });
+
+      // Force the CircleAvatar widget to rebuild
+      if (_avatarKey.currentState != null) {
+        (_avatarKey.currentState as State).setState(() {});
+      }
+
+      print('Image uploaded successfully!');
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // Your app bar code
+          ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 4.0,
-                ),
-                child: Text(
-                  'FEUP-reUSE',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 39.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    key: _avatarKey,
+                    radius: 50,
+                    backgroundImage: _profileImageUrl.isNotEmpty
+                        ? NetworkImage(_profileImageUrl)
+                        : null,
                   ),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: uploadImage,
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.camera_alt, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Container(
-              height: 4,
-              color: Colors.black,
+            SizedBox(height: 20),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _biographyController,
+              decoration: InputDecoration(labelText: 'Biography'),
+              maxLines: null,
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: saveProfile,
+                child: Text('Save'),
+              ),
             ),
           ],
         ),
-        centerTitle: true,
-        elevation: 4,
       ),
-      body: Center(),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
