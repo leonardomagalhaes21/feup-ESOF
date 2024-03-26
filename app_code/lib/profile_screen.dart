@@ -21,9 +21,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _biographyController;
   String _profileImageUrl = '';
   final ImagePicker _imagePicker = ImagePicker();
-  User? _currentUser; // Store the current user
+  User? _currentUser;
 
-  // Key for the CircleAvatar widget
   final GlobalKey _avatarKey = GlobalKey();
 
   @override
@@ -31,15 +30,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _nameController = TextEditingController();
     _biographyController = TextEditingController();
-    _getCurrentUser(); // Retrieve the current user
+    _getCurrentUser();
   }
 
   Future<void> _getCurrentUser() async {
     _currentUser = FirebaseAuth.instance.currentUser;
     if (_currentUser != null) {
-      loadUserProfile(); // Load user profile after getting the user
+      loadUserProfile(); 
     } else {
-      // Handle case where user is not logged in
     }
   }
 
@@ -47,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       DocumentSnapshot userProfile = await FirebaseFirestore.instance
           .collection('users')
-          .doc(_currentUser!.uid) // Use the current user's ID
+          .doc(_currentUser!.uid) 
           .get();
       setState(() {
         _nameController.text = userProfile['name'] ?? '';
@@ -63,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(_currentUser!.uid) // Use the current user's ID
+          .doc(_currentUser!.uid) 
           .set({
         'name': _nameController.text.trim(),
         'biography': _biographyController.text.trim(),
@@ -86,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(_currentUser!.uid) // Use the current user's ID
+          .doc(_currentUser!.uid)
           .update({
         'profileImageBytes': imageBytes,
       });
@@ -95,7 +93,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _profileImageUrl = 'data:image/jpeg;base64,${base64Encode(imageBytes)}';
       });
 
-      // Force the CircleAvatar widget to rebuild
       if (_avatarKey.currentState != null) {
         (_avatarKey.currentState as State).setState(() {});
       }
@@ -110,7 +107,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          // Your app bar code
           ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
