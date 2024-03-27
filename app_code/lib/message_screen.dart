@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
@@ -25,11 +26,28 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final List<ChatMessage> _messages = []; 
-  final TextEditingController _textEditingController =
-      TextEditingController(); 
+  final List<ChatMessage> _messages = [];
+  final TextEditingController _textEditingController = TextEditingController();
+  String _selectedRecipient = '';
+  List<DocumentSnapshot> _allUsers = [];
 
-  String _selectedRecipient = ''; 
+  @override
+  void initState() {
+    super.initState();
+    _getAllUsers();
+  }
+
+  Future<void> _getAllUsers() async {
+    try {
+      QuerySnapshot usersSnapshot =
+          await FirebaseFirestore.instance.collection('users').get();
+      setState(() {
+        _allUsers = usersSnapshot.docs;
+      });
+    } catch (e) {
+      print('Error fetching users: $e');
+    }
+  }
 
   void _sendMessage() {
     String messageText = _textEditingController.text.trim();
@@ -187,22 +205,15 @@ class _MessageScreenState extends State<MessageScreen> {
                       title: Text('Select Recipient'),
                       content: SingleChildScrollView(
                         child: Column(
-                          children: [
-                            ListTile(
-                              title: Text('Recipient 1'),
+                          children: _allUsers.map((user) {
+                            return ListTile(
+                              title: Text(user['name']),
                               onTap: () {
-                                _selectRecipient('Recipient 1');
+                                _selectRecipient(user['name']);
                                 Navigator.pop(context);
                               },
-                            ),
-                            ListTile(
-                              title: Text('Recipient 2'),
-                              onTap: () {
-                                _selectRecipient('Recipient 2');
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
+                            );
+                          }).toList(),
                         ),
                       ),
                     );
