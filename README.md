@@ -110,7 +110,7 @@ Feup-reUSE is deployed on the user's smartphone. The application securely stores
 
 Moreover, Feup-reUSE has access to the local files stored on the user's smartphone. This access enables the application to upload photos for creating posts and to update the user's profile picture.
 
-![DeploymentView](/images/PhysicalArchitecture.png)
+![DeploymentView](/images/DeploymentView.png)
 
 ### Vertical prototype
 
