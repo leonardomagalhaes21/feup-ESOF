@@ -61,7 +61,7 @@ But what sets FEUP-reUSE apart is its commitment to fostering a spirit of genero
 
 ## Requirements
 
-**The <u>User Stories</u> can be found [Here](/docs/UserStories.md).**
+**The <u>User Stories</u> can be found [Here](https://github.com/FEUP-LEIC-ES-2023-24/2LEIC02T1/issues).**
 
 
 **User interface mockups**.
