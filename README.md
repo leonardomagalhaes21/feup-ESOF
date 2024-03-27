@@ -73,14 +73,9 @@ You can view the detailed design in Figma by clicking [here](https://www.figma.c
 
 ### Domain model
 
-To better understand the context of the software system, it is very useful to have a simple UML class diagram with all the key concepts (names, attributes) and relationships involved of the problem domain addressed by your module. 
-Also provide a short textual description of each concept (domain class). 
+A user profile includes the user's name, email address, phone number, and profile picture. Each user can publish multiple products, with each product categorized accordingly. A published product available for trade is termed a "Post," which requires a description and image. Each post is associated with a status indicating its availability. Additionally, users can engage in multiple chats with other traders to facilitate and expedite trades.
 
-Example:
- <p align="center" justify="center">
-  <img src="https://github.com/FEUP-LEIC-ES-2022-23/templates/blob/main/images/DomainModel.png"/>
-</p>
-
+![DomainModel](/images/Domainmodel.png)
 
 ## Architecture and Design
 
