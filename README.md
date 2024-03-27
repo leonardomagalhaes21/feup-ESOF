@@ -108,7 +108,9 @@ Moreover, Feup-reUSE has access to the local files stored on the user's smartpho
 ![DeploymentView](/images/DeploymentView.png)
 
 ### Vertical prototype
+For the Vertical Prototype, we focused on implementing the search user functionality. This feature was chosen due to its simplicity and its seamless integration between the backend, frontend, and Firebase.
 
+![VerticalPrototype](/images/preview.gif)
 
 ## Project management
 You can find below information and references related with the project management in our team: 
