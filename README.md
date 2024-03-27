@@ -66,9 +66,11 @@ But what sets FEUP-reUSE apart is its commitment to fostering a spirit of genero
 
 **User interface mockups**.
 
-<div style="display: flex; align-items: center; justify-content: center;">
-  <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="500" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FwaG9rfnHrQoSPZGIzqWNK3%2FUntitled%3Ftype%3Ddesign%26node-id%3D0%253A1%26mode%3Ddesign%26t%3DCNXMsZtoZEVx7IbM-1" allowfullscreen></iframe>
-</div>
+You can view the detailed design in Figma by clicking [here](https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FwaG9rfnHrQoSPZGIzqWNK3%2FUntitled%3Ftype%3Ddesign%26node-id%3D0%253A1%26mode%3Ddesign%26t%3DCNXMsZtoZEVx7IbM-1).
+
+<img width="500" src="/images/FEUP-reUSE mockup.png">
+
+
 
 
 ### Domain model
@@ -116,8 +118,28 @@ Moreover, Feup-reUSE has access to the local files stored on the user's smartpho
 
 
 ## Project management
+You can find below information and references related with the project management in our team: 
 
-- Backlog: Product backlog and Iteration backlog in the [Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/59);
+* Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/59);
+* Release management: 
+- [Iteration 0](#iteration-0)
+- [Iteration 1]()
+- [Iteration 2]()
+- [Iteration 3]()
 
+
+### Iteration planning and retrospectives:
+
+## Iteration 0
+
+> ## Plans:
+> ### Development Board
+> <p>Start:</p>
+> ![BacklogIteration0](/images/BacklogIteration0.png)
+> <br>
+> <p>End:</p>
+> ![BacklogIteration0](/images/BacklogIteration0.png)
+>
+> ### Retrospectives
+> <p>This iteration does not add any functionalities to the application.</p>
  
-
