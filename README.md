@@ -87,6 +87,19 @@ Example:
 
 ### Logical architecture
 
+In this subsection, we document the high-level logical structure of the code (Logical View), using a UML diagram with logical packages.
+
+Our system has three main components:
+
+-User Interface
+The UI component is responsible for user interactions. It communicates user input to the logic component for processing.
+
+-Logic
+The Logic component serves as a mediator between the UI and the database and handles authentication, chat and others.
+
+-Database
+Firebase serves as the backend storage solution, storing user data securely and facilitating real-time data synchronization.
+
 ![LogicalView](/images/LogicalArchitecture.png)
 
 ### Physical architecture
