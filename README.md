@@ -68,9 +68,7 @@ But what sets FEUP-reUSE apart is its commitment to fostering a spirit of genero
 
 You can view the detailed design in Figma by clicking [here](https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FwaG9rfnHrQoSPZGIzqWNK3%2FUntitled%3Ftype%3Ddesign%26node-id%3D0%253A1%26mode%3Ddesign%26t%3DCNXMsZtoZEVx7IbM-1).
 
-<img width="500" src="/images/FEUP-reUSE mockup.png">
-
-
+![Mockup](/images/FEUP-reUSE%20mockup.png)
 
 
 ### Domain model
@@ -135,10 +133,10 @@ You can find below information and references related with the project managemen
 > ## Plans:
 > ### Development Board
 > <p>Start:</p>
-> ![BacklogIteration0](/images/BacklogIteration0.png)
+> <img src="/images/BacklogIteration0.png">
 > <br>
 > <p>End:</p>
-> ![BacklogIteration0](/images/BacklogIteration0.png)
+> <img src="/images/BacklogIteration0.png">
 >
 > ### Retrospectives
 > <p>This iteration does not add any functionalities to the application.</p>
