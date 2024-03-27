@@ -75,7 +75,7 @@ You can view the detailed design in Figma by clicking [here](https://www.figma.c
 
 A user profile includes the user's name, email address, phone number, and profile picture. Each user can publish multiple products, with each product categorized accordingly. A published product available for trade is termed a "Post," which requires a description and image. Each post is associated with a status indicating its availability. Additionally, users can engage in multiple chats with other traders to facilitate and expedite trades.
 
-![DomainModel](/images/Domainmodel.png)
+![DomainModel](/images/DomainModel.png)
 
 ## Architecture and Design
 
