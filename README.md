@@ -96,6 +96,11 @@ In this section you should start by briefly describing the overall components of
 
 ### Physical architecture
 
+In this subsection, we provide an overview of the physical structure of the Feup-reUSE software system using a UML deployment diagram (Deployment View).
+
+Feup-reUSE is deployed on the user's smartphone. The application securely stores login data and other user information utilizing Firebase, a robust backend platform. This ensures seamless authentication and data management functionalities.
+
+Moreover, Feup-reUSE has access to the local files stored on the user's smartphone. This access enables the application to upload photos for creating posts and to update the user's profile picture.
 
 ![DeploymentView](/images/PhysicalArchitecture.png)
 
