@@ -117,6 +117,7 @@ Moreover, Feup-reUSE has access to the local files stored on the user's smartpho
 
 ## Project management
 
-End of Sprint 0:
+- Backlog: Product backlog and Iteration backlog in the [Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/59);
+
  
 
