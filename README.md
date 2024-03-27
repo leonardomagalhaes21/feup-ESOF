@@ -61,7 +61,7 @@ But what sets FEUP-reUSE apart is its commitment to fostering a spirit of genero
 
 ## Requirements
 
-**The <u>User Stories</u> can be find [Here](/docs/UserStories.md).**
+**The <u>User Stories</u> can be found [Here](/docs/UserStories.md).**
 
 
 **User interface mockups**.
