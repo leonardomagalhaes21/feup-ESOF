@@ -138,3 +138,17 @@ You can find below information and references related with the project managemen
 > ### Retrospectives
 > <p>This iteration does not add any functionalities to the application.</p>
  
+## Iteration 1
+
+> ## Plans:
+> ### Development Board
+> <p>Start:</p>
+> <img src="/images/BacklogIteration1Start.png">
+> <br>
+> <p>End:</p>
+>
+> ### Soon
+>
+> ### Retrospectives
+> <p>This iteration does not add any functionalities to the application.</p>
+ 
