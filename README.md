@@ -118,7 +118,7 @@ You can find below information and references related with the project managemen
 * Backlog management: Product backlog and Sprint backlog in a [Github Projects board](https://github.com/orgs/FEUP-LEIC-ES-2023-24/projects/59);
 * Release management: 
 - [Iteration 0](#iteration-0)
-- [Iteration 1]()
+- [Iteration 1](#iteration-1)
 - [Iteration 2]()
 - [Iteration 3]()
 
