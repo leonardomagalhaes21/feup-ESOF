@@ -1,0 +1,1 @@
+ /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/.dart_tool/flutter_build/353c21b5237dc4a98a7888ea9c2b0388/native_assets.yaml: 

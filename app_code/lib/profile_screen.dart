@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
+import 'dart:typed_data';
 import 'message_screen.dart';
-import 'dart:io';
 import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
@@ -36,16 +36,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _getCurrentUser() async {
     _currentUser = FirebaseAuth.instance.currentUser;
     if (_currentUser != null) {
-      loadUserProfile(); 
-    } else {
-    }
+      loadUserProfile();
+    } else {}
   }
 
   Future<void> loadUserProfile() async {
     try {
       DocumentSnapshot userProfile = await FirebaseFirestore.instance
           .collection('users')
-          .doc(_currentUser!.uid) 
+          .doc(_currentUser!.uid)
           .get();
       setState(() {
         _nameController.text = userProfile['name'] ?? '';
@@ -57,11 +56,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<List<Widget>> loadUserPublications() async {
+  try {
+    QuerySnapshot publicationsSnapshot = await FirebaseFirestore.instance
+        .collection('publications')
+        .where('userId', isEqualTo: _currentUser!.uid)
+        .get();
+
+    List<Widget> publicationWidgets = [];
+    for (DocumentSnapshot doc in publicationsSnapshot.docs) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      List<int> imageBytes = [];
+      String? imageUrl = data['publicationImageUrl'];
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        imageBytes = base64Decode(imageUrl.split(',').last);
+      }
+
+      Widget publicationWidget = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(data['description'] ?? ''),
+          SizedBox(height: 10),
+          imageBytes.isNotEmpty
+              ? Image.memory(
+                  Uint8List.fromList(imageBytes),
+                  fit: BoxFit.cover,
+                )
+              : Container(),
+        ],
+      );
+      publicationWidgets.add(publicationWidget);
+    }
+    return publicationWidgets;
+  } catch (e) {
+    print('Error loading user publications: $e');
+    return []; 
+  }
+}
+
+
   Future<void> saveProfile() async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(_currentUser!.uid) 
+          .doc(_currentUser!.uid)
           .set({
         'name': _nameController.text.trim(),
         'biography': _biographyController.text.trim(),
@@ -90,7 +129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
 
       setState(() {
-        _profileImageUrl = 'data:image/jpeg;base64,${base64Encode(imageBytes)}';
+        _profileImageUrl =
+            'data:image/jpeg;base64,${base64Encode(imageBytes)}';
       });
 
       if (_avatarKey.currentState != null) {
@@ -106,8 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -156,17 +195,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Text('Save'),
               ),
             ),
+            FutureBuilder(
+              future: loadUserPublications(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: snapshot.data ?? [],
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
               icon: Icon(Icons.home),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => MainScreen()),
                 );
@@ -175,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => SearchScreen()),
                 );
@@ -184,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => AddPublicationScreen()),
@@ -194,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: Icon(Icons.message),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => MessageScreen()),
                 );
@@ -202,7 +256,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             IconButton(
               icon: Icon(Icons.person),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
+              },
             ),
           ],
         ),

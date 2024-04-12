@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.feup_re_use.app-mergeReleaseResources-24:/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "/Users/diogovieira/.gradle/caches/transforms-3/d5144e28d418a986092b0dfc02ac7d3f/transformed/core-1.10.1/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
+                    }
+                }
+            ]
+        }
+    ]
+}
