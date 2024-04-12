@@ -1,0 +1,17 @@
+io.flutter.plugins.firebase.auth.firebase_auth-jetified-window-1.0.0-beta04-0 /Users/diogovieira/.gradle/caches/transforms-3/05afbc50c9d5c51966c5374f153362bd/transformed/jetified-window-1.0.0-beta04/res
+io.flutter.plugins.firebase.auth.firebase_auth-core-1.6.0-1 /Users/diogovieira/.gradle/caches/transforms-3/101e8b389cb95798a7d32ea8dbc0126f/transformed/core-1.6.0/res
+io.flutter.plugins.firebase.auth.firebase_auth-jetified-firebase-common-20.4.2-2 /Users/diogovieira/.gradle/caches/transforms-3/267e72da435d0f9d3f9d2e10c5b9af10/transformed/jetified-firebase-common-20.4.2/res
+io.flutter.plugins.firebase.auth.firebase_auth-browser-1.4.0-3 /Users/diogovieira/.gradle/caches/transforms-3/2a20b4d22d5b50df5b58a72de377c255/transformed/browser-1.4.0/res
+io.flutter.plugins.firebase.auth.firebase_auth-jetified-play-services-base-18.0.1-4 /Users/diogovieira/.gradle/caches/transforms-3/470c90739e775cfaa436783d5b330ee0/transformed/jetified-play-services-base-18.0.1/res
+io.flutter.plugins.firebase.auth.firebase_auth-jetified-play-services-basement-18.1.0-5 /Users/diogovieira/.gradle/caches/transforms-3/764af202950415a595fa73b655120b3b/transformed/jetified-play-services-basement-18.1.0/res
+io.flutter.plugins.firebase.auth.firebase_auth-jetified-window-java-1.0.0-beta04-6 /Users/diogovieira/.gradle/caches/transforms-3/a2d5f98bb763a24d25b760f2ecad7a7e/transformed/jetified-window-java-1.0.0-beta04/res
+io.flutter.plugins.firebase.auth.firebase_auth-jetified-annotation-experimental-1.1.0-7 /Users/diogovieira/.gradle/caches/transforms-3/ae2073573988c210f76aee6cffb0c971/transformed/jetified-annotation-experimental-1.1.0/res
+io.flutter.plugins.firebase.auth.firebase_auth-main-8 /Users/diogovieira/.pub-cache/hosted/pub.dev/firebase_auth-4.17.9/android/src/main/res
+io.flutter.plugins.firebase.auth.firebase_auth-release-9 /Users/diogovieira/.pub-cache/hosted/pub.dev/firebase_auth-4.17.9/android/src/release/res
+io.flutter.plugins.firebase.auth.firebase_auth-pngs-10 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_auth/generated/res/pngs/release
+io.flutter.plugins.firebase.auth.firebase_auth-resValues-11 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_auth/generated/res/resValues/release
+io.flutter.plugins.firebase.auth.firebase_auth-rs-12 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_auth/generated/res/rs/release
+io.flutter.plugins.firebase.auth.firebase_auth-mergeReleaseResources-13 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_auth/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.flutter.plugins.firebase.auth.firebase_auth-mergeReleaseResources-14 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_auth/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.flutter.plugins.firebase.auth.firebase_auth-merged_res-15 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_auth/intermediates/merged_res/release
+io.flutter.plugins.firebase.auth.firebase_auth-packaged_res-16 /Users/diogovieira/Desktop/FACUL/feupreuse/feup_re_use/2LEIC02T1/app_code/build/firebase_core/intermediates/packaged_res/release

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'login_screen.dart';
-import 'register_screen.dart';
 import 'profile_screen.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
+import 'publication_list.dart';
 import 'message_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,6 @@ void main() async {
 
   runApp(MyApp(initialScreen: initialScreen));
 }
-
 
 class MyApp extends StatelessWidget {
   final Widget initialScreen;
@@ -78,7 +77,7 @@ class MainScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 4,
       ),
-      body: Center(),
+      body: PublicationList(),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -130,4 +129,5 @@ class MainScreen extends StatelessWidget {
     );
   }
 }
+
 
