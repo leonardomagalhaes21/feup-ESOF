@@ -224,6 +224,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///Users/diogovieira/.pub-cache/hosted/pub.dev/intl-0.17.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "js",
       "rootUri": "file:///Users/diogovieira/.pub-cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
@@ -362,7 +368,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-04-12T15:45:43.920241Z",
+  "generated": "2024-04-12T15:35:10.404261Z",
   "generator": "pub",
   "generatorVersion": "3.3.0"
 }
