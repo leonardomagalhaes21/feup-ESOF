@@ -10,7 +10,7 @@ import 'message_screen.dart';
 import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? NetworkImage(_profileImageUrl)
                     : null,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -93,18 +93,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
-          SizedBox(height: 10), 
+          const SizedBox(height: 10), 
           Image.memory(
             Uint8List.fromList(imageBytes),
             width: double.infinity, 
             fit: BoxFit.contain, 
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             '${_nameController.text}: ${data['description'] ?? ''}',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 50), 
+          const SizedBox(height: 50), 
         ],
       );
       publicationWidgets.add(publicationWidget);
@@ -173,8 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
+              child: const Padding(
+                padding: EdgeInsets.only(
                   bottom: 4.0,
                 ),
                 child: Text(
@@ -198,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 4,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -217,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     right: 0,
                     child: GestureDetector(
                       onTap: uploadImage,
-                      child: CircleAvatar(
+                      child: const CircleAvatar(
                         radius: 18,
                         backgroundColor: Colors.white,
                         child: Icon(Icons.camera_alt, color: Colors.black),
@@ -227,29 +227,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _biographyController,
-              decoration: InputDecoration(labelText: 'Biography'),
+              decoration: const InputDecoration(labelText: 'Biography'),
               maxLines: null,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: saveProfile,
-                child: Text('Save'),
+                child: const Text('Save'),
               ),
             ),
             FutureBuilder(
               future: loadUserPublications(),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
@@ -268,48 +268,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddPublicationScreen()),
+                      builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.message),
+              icon: const Icon(Icons.message),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MessageScreen()),
+                  MaterialPageRoute(builder: (context) => const MessageScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
             ),
