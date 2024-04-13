@@ -5,17 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'main.dart';
-import 'login_screen.dart';
-import 'register_screen.dart';
 import 'profile_screen.dart';
-import 'search_screen.dart';
 import 'add_publication_screen.dart';
 import 'message_screen.dart';
 
 class OtherProfiles extends StatefulWidget {
   final String userId;
 
-  const OtherProfiles({Key? key, required this.userId}) : super(key: key);
+  const OtherProfiles({super.key, required this.userId});
 
   @override
   _OtherProfilesState createState() => _OtherProfilesState();
@@ -71,8 +68,8 @@ class _OtherProfilesState extends State<OtherProfiles> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
+              child: const Padding(
+                padding: EdgeInsets.only(
                   bottom: 4.0,
                 ),
                 child: Text(
@@ -99,11 +96,11 @@ class _OtherProfilesState extends State<OtherProfiles> {
         future: _userProfile,
         builder: (context, profileSnapshot) {
           if (profileSnapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (profileSnapshot.hasError) {
             return Center(child: Text('Error: ${profileSnapshot.error}'));
           } else if (!profileSnapshot.hasData || profileSnapshot.data == null) {
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           } else {
             var userData = profileSnapshot.data!.data()!;
             return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -111,7 +108,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
               builder: (context, publicationsSnapshot) {
                 if (publicationsSnapshot.connectionState ==
                     ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (publicationsSnapshot.hasError) {
                   return Center(
                       child: Text('Error: ${publicationsSnapshot.error}'));
@@ -131,7 +128,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                   backgroundImage: NetworkImage(
                                       userData['profileImageUrl']),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 // Display star rating
                                 RatingBar.builder(
                                   initialRating: _rating,
@@ -140,7 +137,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                   allowHalfRating: true,
                                   itemCount: 5,
                                   itemSize: 30.0,
-                                  itemBuilder: (context, _) => Icon(
+                                  itemBuilder: (context, _) => const Icon(
                                     Icons.star,
                                     color: Colors.amber,
                                   ),
@@ -149,34 +146,34 @@ class _OtherProfilesState extends State<OtherProfiles> {
                               ],
                             ),
                           ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Text(
                           userData['name'],
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.left,
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           userData['biography'] ?? 'No biography available',
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                           textAlign: TextAlign.left,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
                             // Logic to submit rating
                             print('Rating submitted: $_rating');
                           },
-                          child: Text('Rate'),
+                          child: const Text('Rate'),
                         ),
-                        SizedBox(height: 20),
-                        Text(
+                        const SizedBox(height: 20),
+                        const Text(
                           'Publications:',
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Expanded(
                           child: ListView.builder(
                             itemCount: userPublications.size,
@@ -191,29 +188,29 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                       future: _decodeBase64Image(publication['publicationImageUrl']),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return Center(child: CircularProgressIndicator());
+                                          return const Center(child: CircularProgressIndicator());
                                         } else if (snapshot.hasError) {
-                                          return Center(child: Icon(Icons.error));
+                                          return const Center(child: Icon(Icons.error));
                                         } else {
                                           return snapshot.data!;
                                         }
                                       },
                                     ),
                                   ],
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Text(
                                     publication['title'] ?? '',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Text(
                                     publication['description'] ?? '',
-                                    style: TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 16),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                 ],
                               );
                             },
@@ -233,43 +230,43 @@ class _OtherProfilesState extends State<OtherProfiles> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {},
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddPublicationScreen()),
+                      builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.message),
+              icon: const Icon(Icons.message),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MessageScreen()),
+                  MaterialPageRoute(builder: (context) => const MessageScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
             ),
@@ -291,7 +288,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
       );
     } catch (e) {
       print('Error decoding image: $e');
-      return Icon(Icons.error);
+      return const Icon(Icons.error);
     }
   }
 }

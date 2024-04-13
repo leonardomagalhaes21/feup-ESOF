@@ -7,8 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PublicationItem extends StatelessWidget {
   final QueryDocumentSnapshot publication;
 
-  const PublicationItem({Key? key, required this.publication})
-      : super(key: key);
+  const PublicationItem({super.key, required this.publication});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class PublicationItem extends StatelessWidget {
         future: getUserDetails(publication['userId']),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           var user = snapshot.data!;
           var userName = user['name'] ?? 'Unknown';
@@ -37,27 +36,27 @@ class PublicationItem extends StatelessWidget {
                     radius: 20,
                     backgroundImage: NetworkImage(profileImageUrl),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(userName),
                       Text(
                         timestamp,
-                        style: TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               FutureBuilder(
                 future: decodeImage(publicationImageUrl),
                 builder:
                     (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
                   if (imageSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                   return Container(
                     height: 300,
@@ -65,14 +64,14 @@ class PublicationItem extends StatelessWidget {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: imageSnapshot.data ??
-                            AssetImage('assets/placeholder_image.png'),
+                            const AssetImage('assets/placeholder_image.png'),
                         fit: BoxFit.contain,
                       ),
                     ),
                   );
                 },
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(description),
             ],
           );
