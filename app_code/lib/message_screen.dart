@@ -5,6 +5,8 @@ import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
 import 'profile_screen.dart';
+import 'package:intl/intl.dart';
+
 
 class ChatMessage {
   final String sender;
@@ -32,7 +34,6 @@ class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController _textEditingController = TextEditingController();
   String _selectedRecipientId = '';
   List<DocumentSnapshot> _allUsers = [];
-  Stream<List<ChatMessage>>? _messagesStream;
 
   @override
   void initState() {
@@ -49,128 +50,6 @@ class _MessageScreenState extends State<MessageScreen> {
       });
     } catch (e) {
       print('Error fetching users: $e');
-    }
-  }
-
-  Future<String> _getUserName(String userId) async {
-    try {
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
-      return userSnapshot.get('name');
-    } catch (e) {
-      print('Error fetching user name: $e');
-      return '';
-    }
-  }
-
-  Stream<List<ChatMessage>> _getMessagesStream(String selectedRecipientId) {
-    return FirebaseFirestore.instance
-        .collection('messages')
-        .where('receiverId', isEqualTo: selectedRecipientId)
-        .orderBy('timestamp', descending: true) // Sort by timestamp in descending order
-        .snapshots()
-        .asyncMap((snapshot) async {
-      List<ChatMessage> messages = [];
-
-      for (var doc in snapshot.docs) {
-        String senderId = doc['senderId'];
-        String receiverId = doc['receiverId'];
-        String senderName = await _getUserName(senderId);
-        String receiverName = await _getUserName(receiverId);
-
-        messages.add(ChatMessage(
-          sender: senderName,
-          receiver: receiverName,
-          content: doc['content'],
-          timestamp: (doc['timestamp'] as Timestamp).toDate(),
-        ));
-      }
-
-      return messages;
-    });
-  }
-
-  void _sendMessage() async {
-    String messageText = _textEditingController.text.trim();
-    if (messageText.isNotEmpty && _selectedRecipientId.isNotEmpty) {
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        try {
-          String senderName = await _getUserName(currentUser.uid);
-
-          // Optimistically update UI before Firestore operation
-          setState(() {
-            _messages.insert(
-              0,
-              ChatMessage(
-                sender: senderName,
-                receiver: _selectedRecipientId,
-                content: messageText,
-                timestamp: DateTime.now(),
-              ),
-            );
-          });
-
-          // Clear text input immediately
-          _textEditingController.clear();
-
-          // Send message to Firestore
-          await FirebaseFirestore.instance.collection('messages').add({
-            'senderId': currentUser.uid,
-            'receiverId': _selectedRecipientId,
-            'content': messageText,
-            'timestamp': Timestamp.now(),
-          });
-        } catch (e) {
-          print('Error sending message: $e');
-          // Revert UI changes if Firestore operation fails
-          setState(() {
-            _messages.removeAt(0);
-          });
-          // Optionally, display an error message to the user
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to send message. Please try again.'),
-            ),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('You are not signed in'),
-          ),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please select a recipient'),
-        ),
-      );
-    }
-  }
-
-  Future<void> _selectRecipient(String recipientName) async {
-    try {
-      QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('name', isEqualTo: recipientName)
-          .limit(1)
-          .get();
-      if (usersSnapshot.docs.isNotEmpty) {
-        String recipientId = usersSnapshot.docs.first.id;
-        setState(() {
-          _selectedRecipientId = recipientId;
-        });
-        // Update the messages stream with the new recipient
-        _messagesStream = _getMessagesStream(recipientId);
-      } else {
-        print('User not found with name: $recipientName');
-      }
-    } catch (e) {
-      print('Error selecting recipient: $e');
     }
   }
 
@@ -211,6 +90,194 @@ class _MessageScreenState extends State<MessageScreen> {
       body: Column(
         children: [
           Expanded(
+            child: ListView(
+              children: _allUsers.map((user) {
+                return ListTile(
+                  title: Text(user['name']),
+                  onTap: () async {
+                    String recipientId = user.id;
+                    String recipientName = await _getUserName(recipientId);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                          recipientId: recipientId,
+                          recipientName: recipientName,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddPublicationScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.message),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<String> _getUserName(String userId) async {
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      return userSnapshot.get('name');
+    } catch (e) {
+      print('Error fetching user name: $e');
+      return '';
+    }
+  }
+}
+
+class ChatScreen extends StatefulWidget {
+  final String recipientId;
+  final String recipientName;
+
+  const ChatScreen({
+    required this.recipientId,
+    required this.recipientName,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _textEditingController = TextEditingController();
+  late Stream<List<ChatMessage>> _messagesStream;
+  late Map<String, String> _userNames = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _messagesStream = _getMessagesStream(widget.recipientId);
+    _loadUserNames();
+  }
+
+  Stream<List<ChatMessage>> _getMessagesStream(String recipientId) {
+    return FirebaseFirestore.instance
+        .collection('messages')
+        .where('receiverId', isEqualTo: recipientId)
+        .orderBy('timestamp', descending: true) // Sort by timestamp in descending order
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ChatMessage(
+          sender: doc['senderId'],
+          receiver: doc['receiverId'],
+          content: doc['content'],
+          timestamp: (doc['timestamp'] as Timestamp).toDate(),
+        );
+      }).toList();
+    });
+  }
+
+    Future<void> _loadUserNames() async {
+    try {
+      final usersSnapshot = await FirebaseFirestore.instance.collection('users').get();
+      final Map<String, String> userNames = {};
+      usersSnapshot.docs.forEach((doc) {
+        userNames[doc.id] = doc['name'] as String;
+      });
+      setState(() {
+        _userNames = userNames;
+      });
+    } catch (e) {
+      print('Error loading user names: $e');
+    }
+  }
+
+
+  void _sendMessage() {
+    String messageText = _textEditingController.text.trim();
+    if (messageText.isNotEmpty) {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        try {
+          FirebaseFirestore.instance.collection('messages').add({
+            'senderId': currentUser.uid,
+            'receiverId': widget.recipientId,
+            'content': messageText,
+            'timestamp': Timestamp.now(),
+          });
+          _textEditingController.clear();
+        } catch (e) {
+          print('Error sending message: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to send message. Please try again.'),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('You are not signed in'),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Chat with ${widget.recipientName}'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
             child: StreamBuilder<List<ChatMessage>>(
               stream: _messagesStream,
               builder: (context, snapshot) {
@@ -219,16 +286,16 @@ class _MessageScreenState extends State<MessageScreen> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
-                  _messages = snapshot.data ?? [];
+                  List<ChatMessage> messages = snapshot.data ?? [];
                   return ListView.builder(
-                    reverse: true, // Show latest messages at the bottom
-                    itemCount: _messages.length,
+                    reverse: true,
+                    itemCount: messages.length,
                     itemBuilder: (context, index) {
-                      ChatMessage message = _messages[index];
+                      final senderId = messages[index].sender;
+                      final senderName = _userNames[senderId] ?? 'Unknown';
                       return ListTile(
-                        title: Text(message.sender),
-                        subtitle: Text(message.content),
-                        trailing: Text('${message.timestamp.hour}:${message.timestamp.minute}'),
+                        title: Text(messages[index].content),
+                        subtitle: Text('$senderName - ${DateFormat.yMd().add_jm().format(messages[index].timestamp)}'),
                       );
                     },
                   );
@@ -261,93 +328,6 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddPublicationScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Select Recipient'),
-                      content: SingleChildScrollView(
-                        child: Column(
-                          children: _allUsers.map((user) {
-                            return ListTile(
-                              title: Text(user['name']),
-                              onTap: () {
-                                _selectRecipient(user['name']);
-                                Navigator.pop(context);
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chat App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MessageScreen(),
     );
   }
 }
