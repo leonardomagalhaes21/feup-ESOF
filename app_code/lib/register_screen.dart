@@ -5,9 +5,16 @@ import 'main.dart';
 class RegisterScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   Future<void> _register(BuildContext context) async {
     try {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        // Senhas não coincidem, exiba um aviso ou mensagem de erro
+        print("As senhas não coincidem.");
+        return;
+      }
+
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text,
@@ -18,7 +25,7 @@ class RegisterScreen extends StatelessWidget {
         MaterialPageRoute(builder: (context) => MainScreen()),
       );
     } catch (e) {
-      print("Registration failed: $e");
+      print("Falha no registro: $e");
     }
   }
 
@@ -26,7 +33,35 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register'),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 4.0,
+                ),
+                child: Text(
+                  'FEUP-reUSE',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 39.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              height: 4,
+              color: Colors.black,
+            ),
+          ],
+        ),
+        centerTitle: true,
+        elevation: 4,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,6 +75,11 @@ class RegisterScreen extends StatelessWidget {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            TextField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(labelText: 'Confirm Password'),
               obscureText: true,
             ),
             SizedBox(height: 20),
