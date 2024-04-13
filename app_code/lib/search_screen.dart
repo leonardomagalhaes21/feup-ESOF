@@ -7,7 +7,7 @@ import 'other_profiles_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -47,8 +47,8 @@ class _SearchScreenState extends State<SearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
+              child: const Padding(
+                padding: EdgeInsets.only(
                   bottom: 4.0,
                 ),
                 child: Text(
@@ -79,7 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search by name',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -99,7 +99,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           backgroundImage: NetworkImage(
                               _filteredUsers[index]['profileImageUrl']),
                         )
-                      : CircleAvatar(),
+                      : const CircleAvatar(),
                   title: Text(_filteredUsers[index]['name']),
                   onTap: () {
                     Navigator.push(
@@ -122,43 +122,43 @@ class _SearchScreenState extends State<SearchScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {},
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddPublicationScreen()),
+                      builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.message),
+              icon: const Icon(Icons.message),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MessageScreen()),
+                  MaterialPageRoute(builder: (context) => const MessageScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
             ),

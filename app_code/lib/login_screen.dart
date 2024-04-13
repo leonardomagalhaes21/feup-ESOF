@@ -7,6 +7,8 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  LoginScreen({super.key});
+
   Future<void> _login(BuildContext context) async {
     try {
       UserCredential userCredential =
@@ -16,7 +18,7 @@ class LoginScreen extends StatelessWidget {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } catch (e) {
       print("Login failed: $e");
@@ -27,7 +29,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,17 +38,17 @@ class LoginScreen extends StatelessWidget {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _login(context),
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -55,7 +57,7 @@ class LoginScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
               },
-              child: Text('Register'),
+              child: const Text('Register'),
             ),
           ],
         ),

@@ -23,16 +23,16 @@ class ChatMessage {
 }
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({Key? key}) : super(key: key);
+  const MessageScreen({super.key});
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  List<ChatMessage> _messages = [];
+  final List<ChatMessage> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
-  String _selectedRecipientId = '';
+  final String _selectedRecipientId = '';
   List<DocumentSnapshot> _allUsers = [];
 
   @override
@@ -63,8 +63,8 @@ class _MessageScreenState extends State<MessageScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
+              child: const Padding(
+                padding: EdgeInsets.only(
                   bottom: 4.0,
                 ),
                 child: Text(
@@ -118,43 +118,43 @@ class _MessageScreenState extends State<MessageScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddPublicationScreen()),
+                      builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.message),
+              icon: const Icon(Icons.message),
               onPressed: () {},
             ),
             IconButton(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
             ),
@@ -185,8 +185,8 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({
     required this.recipientId,
     required this.recipientName,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -226,9 +226,9 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final usersSnapshot = await FirebaseFirestore.instance.collection('users').get();
       final Map<String, String> userNames = {};
-      usersSnapshot.docs.forEach((doc) {
+      for (var doc in usersSnapshot.docs) {
         userNames[doc.id] = doc['name'] as String;
-      });
+      }
       setState(() {
         _userNames = userNames;
       });
@@ -254,14 +254,14 @@ class _ChatScreenState extends State<ChatScreen> {
         } catch (e) {
           print('Error sending message: $e');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Failed to send message. Please try again.'),
             ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('You are not signed in'),
           ),
         );
@@ -282,7 +282,7 @@ class _ChatScreenState extends State<ChatScreen> {
               stream: _messagesStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
@@ -303,7 +303,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          Divider(height: 1),
+          const Divider(height: 1),
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
             child: Row(
@@ -313,14 +313,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: TextField(
                       controller: _textEditingController,
-                      decoration: InputDecoration.collapsed(
+                      decoration: const InputDecoration.collapsed(
                         hintText: 'Type a message',
                       ),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
                 ),
               ],

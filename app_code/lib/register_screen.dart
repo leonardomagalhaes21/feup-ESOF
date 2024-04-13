@@ -7,6 +7,8 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  RegisterScreen({super.key});
+
   Future<void> _register(BuildContext context) async {
     try {
       if (_passwordController.text != _confirmPasswordController.text) {
@@ -22,7 +24,7 @@ class RegisterScreen extends StatelessWidget {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } catch (e) {
       print("Falha no registro: $e");
@@ -39,8 +41,8 @@ class RegisterScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
+              child: const Padding(
+                padding: EdgeInsets.only(
                   bottom: 4.0,
                 ),
                 child: Text(
@@ -70,22 +72,22 @@ class RegisterScreen extends StatelessWidget {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             TextField(
               controller: _confirmPasswordController,
-              decoration: InputDecoration(labelText: 'Confirm Password'),
+              decoration: const InputDecoration(labelText: 'Confirm Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _register(context),
-              child: Text('Register'),
+              child: const Text('Register'),
             ),
           ],
         ),
