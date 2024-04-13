@@ -43,6 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         title: Text('FEUP-reUSE'),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
