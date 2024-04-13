@@ -205,7 +205,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _loadUserNames();
   }
 
-
   Stream<List<ChatMessage>> _getMessagesStream(String senderId, String recipientId) {
     return FirebaseFirestore.instance
         .collection('messages')
@@ -213,7 +212,7 @@ class _ChatScreenState extends State<ChatScreen> {
         .snapshots()
         .map((snapshot) {
       List<ChatMessage> messages = [];
-      snapshot.docs.forEach((doc) {
+      for (var doc in snapshot.docs) {
         if ((doc['senderId'] == senderId && doc['receiverId'] == recipientId) ||
             (doc['senderId'] == recipientId && doc['receiverId'] == senderId)) {
           messages.add(
@@ -225,12 +224,12 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         }
-      });
+      }
       return messages;
     });
   }
 
-    Future<void> _loadUserNames() async {
+  Future<void> _loadUserNames() async {
     try {
       final usersSnapshot = await FirebaseFirestore.instance.collection('users').get();
       final Map<String, String> userNames = {};
@@ -244,7 +243,6 @@ class _ChatScreenState extends State<ChatScreen> {
       print('Error loading user names: $e');
     }
   }
-
 
   void _sendMessage() {
     String messageText = _textEditingController.text.trim();
@@ -299,11 +297,35 @@ class _ChatScreenState extends State<ChatScreen> {
                     reverse: true,
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
-                      final senderId = messages[index].sender;
-                      final senderName = _userNames[senderId] ?? 'Unknown';
-                      return ListTile(
-                        title: Text(messages[index].content),
-                        subtitle: Text('$senderName - ${DateFormat.yMd().add_jm().format(messages[index].timestamp)}'),
+                      final message = messages[index];
+                      final isCurrentUser = message.sender == FirebaseAuth.instance.currentUser?.uid;
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _userNames[message.sender] ?? 'Unknown',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(12.0),
+                              decoration: BoxDecoration(
+                                color: isCurrentUser ? Colors.blue : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: Text(
+                                message.content,
+                                style: TextStyle(color: isCurrentUser ? Colors.white : Colors.black),
+                              ),
+                            ),
+                            Text(
+                              DateFormat.yMd().add_jm().format(message.timestamp),
+                              style: const TextStyle(fontSize: 10.0),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   );
@@ -311,18 +333,31 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          const Divider(height: 1),
           Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            margin: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: const Color.fromRGBO(240, 240, 240, 1), // Background color
+              borderRadius: BorderRadius.circular(30.0), // Rounded corners
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3), // Changes position of shadow
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: TextField(
                       controller: _textEditingController,
-                      decoration: const InputDecoration.collapsed(
+                      decoration: InputDecoration(
                         hintText: 'Type a message',
+                        border: InputBorder.none, // Remove border
+                        hintStyle: TextStyle(color: Colors.grey[500]), // Hint color
                       ),
                     ),
                   ),
@@ -335,6 +370,54 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.home),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddPublicationScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.message),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
