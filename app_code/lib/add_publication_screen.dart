@@ -9,7 +9,7 @@ import 'message_screen.dart';
 import 'profile_screen.dart';
 
 class AddPublicationScreen extends StatefulWidget {
-  const AddPublicationScreen({Key? key}) : super(key: key);
+  const AddPublicationScreen({super.key});
 
   @override
   _AddPublicationScreenState createState() => _AddPublicationScreenState();
@@ -76,8 +76,8 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
+              child: const Padding(
+                padding: EdgeInsets.only(
                   bottom: 4.0,
                 ),
                 child: Text(
@@ -108,9 +108,9 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
           children: [
             ElevatedButton(
               onPressed: uploadImage,
-              child: Text('Select Image'),
+              child: const Text('Select Image'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _publicationImageUrl.isNotEmpty
                 ? SizedBox(
                     width: 100,
@@ -121,19 +121,19 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
                     ),
                   )
                 : Container(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _descriptionController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Write a description...',
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: uploadPublication,
-              child: Text('Upload Publication'),
+              child: const Text('Upload Publication'),
             ),
           ],
         ),
@@ -143,48 +143,48 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddPublicationScreen()),
+                      builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.message),
+              icon: const Icon(Icons.message),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MessageScreen()),
+                  MaterialPageRoute(builder: (context) => const MessageScreen()),
                 );
               },
             ),
             IconButton(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
             ),
