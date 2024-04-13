@@ -200,25 +200,33 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _messagesStream = _getMessagesStream(widget.recipientId);
+    String senderId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Get current user's ID
+    _messagesStream = _getMessagesStream(senderId, widget.recipientId);
     _loadUserNames();
   }
 
-  Stream<List<ChatMessage>> _getMessagesStream(String recipientId) {
+
+  Stream<List<ChatMessage>> _getMessagesStream(String senderId, String recipientId) {
     return FirebaseFirestore.instance
         .collection('messages')
-        .where('receiverId', isEqualTo: recipientId)
         .orderBy('timestamp', descending: true) // Sort by timestamp in descending order
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return ChatMessage(
-          sender: doc['senderId'],
-          receiver: doc['receiverId'],
-          content: doc['content'],
-          timestamp: (doc['timestamp'] as Timestamp).toDate(),
-        );
-      }).toList();
+      List<ChatMessage> messages = [];
+      snapshot.docs.forEach((doc) {
+        if ((doc['senderId'] == senderId && doc['receiverId'] == recipientId) ||
+            (doc['senderId'] == recipientId && doc['receiverId'] == senderId)) {
+          messages.add(
+            ChatMessage(
+              sender: doc['senderId'],
+              receiver: doc['receiverId'],
+              content: doc['content'],
+              timestamp: (doc['timestamp'] as Timestamp).toDate(),
+            ),
+          );
+        }
+      });
+      return messages;
     });
   }
 
