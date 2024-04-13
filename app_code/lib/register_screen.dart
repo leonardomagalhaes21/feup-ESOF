@@ -5,9 +5,16 @@ import 'main.dart';
 class RegisterScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   Future<void> _register(BuildContext context) async {
     try {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        // Senhas não coincidem, exiba um aviso ou mensagem de erro
+        print("As senhas não coincidem.");
+        return;
+      }
+
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text,
@@ -18,7 +25,7 @@ class RegisterScreen extends StatelessWidget {
         MaterialPageRoute(builder: (context) => MainScreen()),
       );
     } catch (e) {
-      print("Registration failed: $e");
+      print("Falha no registro: $e");
     }
   }
 
@@ -40,6 +47,11 @@ class RegisterScreen extends StatelessWidget {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            TextField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(labelText: 'Confirm Password'),
               obscureText: true,
             ),
             SizedBox(height: 20),
