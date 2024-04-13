@@ -39,9 +39,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
     }
   }
 
-  // Função para lidar com o evento de dar rating
   void _rateUser(double rating) {
-    // Aqui você pode implementar a lógica para dar rating
     setState(() {
       _rating = rating;
     });
@@ -51,6 +49,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
