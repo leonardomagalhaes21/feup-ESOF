@@ -76,14 +76,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Widget publicationWidget = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(data['description'] ?? ''),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: _profileImageUrl.isNotEmpty
+                    ? NetworkImage(_profileImageUrl)
+                    : null,
+              ),
+              SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(_nameController.text),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 10), 
+          Image.memory(
+            Uint8List.fromList(imageBytes),
+            width: double.infinity, 
+            fit: BoxFit.contain, 
+          ),
           SizedBox(height: 10),
-          imageBytes.isNotEmpty
-              ? Image.memory(
-                  Uint8List.fromList(imageBytes),
-                  fit: BoxFit.cover,
-                )
-              : Container(),
+          Text(
+            '${_nameController.text}: ${data['description'] ?? ''}',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 50), 
         ],
       );
       publicationWidgets.add(publicationWidget);
@@ -91,10 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return publicationWidgets;
   } catch (e) {
     print('Error loading user publications: $e');
-    return []; 
+    return [];
   }
 }
-
 
   Future<void> saveProfile() async {
     try {
