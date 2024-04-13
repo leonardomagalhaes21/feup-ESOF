@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'main.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
@@ -21,6 +20,7 @@ class OtherProfiles extends StatefulWidget {
 
 class _OtherProfilesState extends State<OtherProfiles> {
   late Future<DocumentSnapshot> _userProfile;
+  double _rating = 0; // Valor inicial do rating
 
   @override
   void initState() {
@@ -37,6 +37,14 @@ class _OtherProfilesState extends State<OtherProfiles> {
     } catch (e) {
       throw Exception('Error fetching user profile: $e');
     }
+  }
+
+  // Função para lidar com o evento de dar rating
+  void _rateUser(double rating) {
+    // Aqui você pode implementar a lógica para dar rating
+    setState(() {
+      _rating = rating;
+    });
   }
 
   @override
@@ -83,25 +91,60 @@ class _OtherProfilesState extends State<OtherProfiles> {
             return Center(child: Text('No data available'));
           } else {
             var userData = snapshot.data!.data() as Map<String, dynamic>;
-            return ListView(
-              padding: EdgeInsets.all(16.0),
-              children: [
-                if (userData['profileImageUrl'] != null)
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(userData['profileImageUrl']),
+            return Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (userData['profileImageUrl'] != null)
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                NetworkImage(userData['profileImageUrl']),
+                          ),
+                          SizedBox(height: 10),
+                          // Display de estrelas
+                          RatingBar.builder(
+                            initialRating: _rating,
+                            minRating: 0,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemSize: 30.0,
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: _rateUser,
+                          ),
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 20),
+                  Text(
+                    userData['name'],
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
                   ),
-                SizedBox(height: 20),
-                Text(
-                  userData['name'],
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  userData['biography'] ?? 'No biography available',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ],
+                  SizedBox(height: 10),
+                  Text(
+                    userData['biography'] ?? 'No biography available',
+                    style: TextStyle(fontSize: 18),
+                    textAlign: TextAlign.left,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Lógica para submeter a avaliação
+                      print('Avaliação submetida: $_rating');
+                    },
+                    child: Text('Avaliar'),
+                  ),
+                ],
+              ),
             );
           }
         },
