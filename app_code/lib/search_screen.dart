@@ -41,8 +41,35 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('FEUP-reUSE'),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 4.0,
+                ),
+                child: Text(
+                  'FEUP-reUSE',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 39.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              height: 4,
+              color: Colors.black,
+            ),
+          ],
+        ),
         centerTitle: true,
+        elevation: 4,
       ),
       body: Column(
         children: [
