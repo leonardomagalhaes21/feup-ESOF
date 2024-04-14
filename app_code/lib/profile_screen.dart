@@ -7,6 +7,7 @@ import 'search_screen.dart';
 import 'add_publication_screen.dart';
 import 'dart:typed_data';
 import 'message_screen.dart';
+import 'login_screen.dart';
 import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
@@ -57,64 +58,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<List<Widget>> loadUserPublications() async {
-  try {
-    QuerySnapshot publicationsSnapshot = await FirebaseFirestore.instance
-        .collection('publications')
-        .where('userId', isEqualTo: _currentUser!.uid)
-        .get();
+    try {
+      QuerySnapshot publicationsSnapshot = await FirebaseFirestore.instance
+          .collection('publications')
+          .where('userId', isEqualTo: _currentUser!.uid)
+          .get();
 
-    List<Widget> publicationWidgets = [];
-    for (DocumentSnapshot doc in publicationsSnapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      List<Widget> publicationWidgets = [];
+      for (DocumentSnapshot doc in publicationsSnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-      List<int> imageBytes = [];
-      String? imageUrl = data['publicationImageUrl'];
-      if (imageUrl != null && imageUrl.isNotEmpty) {
-        imageBytes = base64Decode(imageUrl.split(',').last);
+        List<int> imageBytes = [];
+        String? imageUrl = data['publicationImageUrl'];
+        if (imageUrl != null && imageUrl.isNotEmpty) {
+          imageBytes = base64Decode(imageUrl.split(',').last);
+        }
+
+        Widget publicationWidget = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: _profileImageUrl.isNotEmpty
+                      ? NetworkImage(_profileImageUrl)
+                      : null,
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_nameController.text),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Image.memory(
+              Uint8List.fromList(imageBytes),
+              width: double.infinity,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '${_nameController.text}: ${data['description'] ?? ''}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 50),
+          ],
+        );
+        publicationWidgets.add(publicationWidget);
       }
-
-      Widget publicationWidget = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundImage: _profileImageUrl.isNotEmpty
-                    ? NetworkImage(_profileImageUrl)
-                    : null,
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(_nameController.text),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10), 
-          Image.memory(
-            Uint8List.fromList(imageBytes),
-            width: double.infinity, 
-            fit: BoxFit.contain, 
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '${_nameController.text}: ${data['description'] ?? ''}',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 50), 
-        ],
-      );
-      publicationWidgets.add(publicationWidget);
+      return publicationWidgets;
+    } catch (e) {
+      print('Error loading user publications: $e');
+      return [];
     }
-    return publicationWidgets;
-  } catch (e) {
-    print('Error loading user publications: $e');
-    return [];
   }
-}
 
   Future<void> saveProfile() async {
     try {
@@ -160,6 +161,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('Image uploaded successfully!');
     } catch (e) {
       print('Error uploading image: $e');
+    }
+  }
+
+  Future<void> _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (Route<dynamic> route) => false, // Clear the stack
+      );
+    } catch (e) {
+      print('Error signing out: $e');
     }
   }
 
@@ -243,6 +257,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ElevatedButton(
                 onPressed: saveProfile,
                 child: const Text('Save'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: _signOut,
+                child: const Text('Logout'),
               ),
             ),
             FutureBuilder(
