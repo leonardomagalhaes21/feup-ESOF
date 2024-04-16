@@ -43,15 +43,46 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Future<void> _getAllUsers() async {
     try {
-      QuerySnapshot usersSnapshot =
-          await FirebaseFirestore.instance.collection('users').get();
-      setState(() {
-        _allUsers = usersSnapshot.docs;
-      });
+      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserUid != null) {
+        final QuerySnapshot senderMessagesSnapshot = await FirebaseFirestore.instance
+            .collection('messages')
+            .where('senderId', isEqualTo: currentUserUid)
+            .get();
+
+        final QuerySnapshot receiverMessagesSnapshot = await FirebaseFirestore.instance
+            .collection('messages')
+            .where('receiverId', isEqualTo: currentUserUid)
+            .get();
+
+        final List<String> distinctUserIds = [];
+        for (var doc in senderMessagesSnapshot.docs) {
+          final receiverId = doc['receiverId'] as String;
+          if (!distinctUserIds.contains(receiverId)) {
+            distinctUserIds.add(receiverId);
+          }
+        }
+        for (var doc in receiverMessagesSnapshot.docs) {
+          final senderId = doc['senderId'] as String;
+          if (!distinctUserIds.contains(senderId)) {
+            distinctUserIds.add(senderId);
+          }
+        }
+
+        final QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where(FieldPath.documentId, whereIn: distinctUserIds)
+            .get();
+
+        setState(() {
+          _allUsers = usersSnapshot.docs;
+        });
+      }
     } catch (e) {
       print('Error fetching users: $e');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,27 +121,31 @@ class _MessageScreenState extends State<MessageScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              children: _allUsers.map((user) {
-                return ListTile(
-                  title: Text(user['name']),
-                  onTap: () async {
-                    String recipientId = user.id;
-                    String recipientName = await _getUserName(recipientId);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatScreen(
-                          recipientId: recipientId,
-                          recipientName: recipientName,
-                        ),
-                      ),
+          child: _allUsers.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  itemCount: _allUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = _allUsers[index];
+                    return ListTile(
+                      title: Text(user['name']),
+                      onTap: () async {
+                        String recipientId = user.id;
+                        String recipientName = await _getUserName(recipientId);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatScreen(
+                              recipientId: recipientId,
+                              recipientName: recipientName,
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              }).toList(),
-            ),
-          ),
+                ),
+        ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
