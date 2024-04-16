@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'message_screen.dart';
 
 class PublicationItem extends StatelessWidget {
   final QueryDocumentSnapshot publication;
@@ -73,6 +74,24 @@ class PublicationItem extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(description),
+              const SizedBox(height: 8),
+              ElevatedButton.icon(
+                onPressed: () {
+                  String sellerId = publication['userId'];
+                  String sellerName = user['name'] ?? 'Unknown';
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        recipientId: sellerId,
+                        recipientName: sellerName,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.message),
+                label: const Text('Chat with Seller'),
+              ),
             ],
           );
         },
