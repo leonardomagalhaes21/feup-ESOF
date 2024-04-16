@@ -440,7 +440,12 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.message),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MessageScreen()),
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.person),
