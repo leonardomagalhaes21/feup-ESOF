@@ -41,47 +41,47 @@ class _MessageScreenState extends State<MessageScreen> {
     _getAllUsers();
   }
 
-Future<void> _getAllUsers() async {
-  try {
-    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-    if (currentUserUid != null) {
-      final QuerySnapshot senderMessagesSnapshot = await FirebaseFirestore.instance
-          .collection('messages')
-          .where('senderId', isEqualTo: currentUserUid)
-          .get();
+  Future<void> _getAllUsers() async {
+    try {
+      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserUid != null) {
+        final QuerySnapshot senderMessagesSnapshot = await FirebaseFirestore.instance
+            .collection('messages')
+            .where('senderId', isEqualTo: currentUserUid)
+            .get();
 
-      final QuerySnapshot receiverMessagesSnapshot = await FirebaseFirestore.instance
-          .collection('messages')
-          .where('receiverId', isEqualTo: currentUserUid)
-          .get();
+        final QuerySnapshot receiverMessagesSnapshot = await FirebaseFirestore.instance
+            .collection('messages')
+            .where('receiverId', isEqualTo: currentUserUid)
+            .get();
 
-      final List<String> distinctUserIds = [];
-      for (var doc in senderMessagesSnapshot.docs) {
-        final receiverId = doc['receiverId'] as String;
-        if (!distinctUserIds.contains(receiverId)) {
-          distinctUserIds.add(receiverId);
+        final List<String> distinctUserIds = [];
+        for (var doc in senderMessagesSnapshot.docs) {
+          final receiverId = doc['receiverId'] as String;
+          if (!distinctUserIds.contains(receiverId)) {
+            distinctUserIds.add(receiverId);
+          }
         }
-      }
-      for (var doc in receiverMessagesSnapshot.docs) {
-        final senderId = doc['senderId'] as String;
-        if (!distinctUserIds.contains(senderId)) {
-          distinctUserIds.add(senderId);
+        for (var doc in receiverMessagesSnapshot.docs) {
+          final senderId = doc['senderId'] as String;
+          if (!distinctUserIds.contains(senderId)) {
+            distinctUserIds.add(senderId);
+          }
         }
+
+        final QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where(FieldPath.documentId, whereIn: distinctUserIds)
+            .get();
+
+        setState(() {
+          _allUsers = usersSnapshot.docs;
+        });
       }
-
-      final QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where(FieldPath.documentId, whereIn: distinctUserIds)
-          .get();
-
-      setState(() {
-        _allUsers = usersSnapshot.docs;
-      });
+    } catch (e) {
+      print('Error fetching users: $e');
     }
-  } catch (e) {
-    print('Error fetching users: $e');
   }
-}
 
 
   @override
