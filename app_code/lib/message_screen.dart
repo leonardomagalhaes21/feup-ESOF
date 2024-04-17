@@ -128,6 +128,10 @@ class _MessageScreenState extends State<MessageScreen> {
                   itemBuilder: (context, index) {
                     final user = _allUsers[index];
                     return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(user['profileImageUrl']),
+                        radius: 20, 
+                      ),
                       title: Text(user['name']),
                       onTap: () async {
                         String recipientId = user.id;
