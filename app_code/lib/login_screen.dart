@@ -51,7 +51,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    'Ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
+                    'O FEUP-reUSE ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.black, // Descrição em preto
