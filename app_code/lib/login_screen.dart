@@ -90,7 +90,7 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Reutilize',
+                  'Reutiliza',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.black, // Rs em preto
@@ -104,7 +104,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ' Reduza',
+                  ' Reduz',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.black, // Rs em preto
@@ -118,7 +118,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ' Recicle.',
+                  ' Recicla.',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.black, // Rs em preto
