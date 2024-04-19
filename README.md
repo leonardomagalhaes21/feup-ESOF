@@ -150,7 +150,16 @@ You can find below information and references related with the project managemen
 >
 > ### Retrospectives
 > <p>Our team demonstrated exceptional collaboration, effectively delivering key features and meeting sprint goals. Communication was clear and frequent, ensuring everyone stayed informed and aligned. These strengths contributed to the successful completion of tasks and the overall progress of the project.</p>
-> <p>While functionality was achieved, we recognize the need to elevate the quality of our designs. We also need to focus on enhancing the user experience, making our designs more intuitive and user-friendly.</p>
-> <p>This retrospective highlights our achievements in collaboration and delivery while emphasizing the importance of improving design quality for future sprints. </p>
 >
+> ## Start
+> <p>Integrate design templates or frameworks into our development process to streamline the design phase and ensure consistency across our products. By adopting pre-built design elements or templates, we can expedite the design process while maintaining a high standard of visual appeal and usability.</p>
+>
+> ## Continue
+> <p>Continue maintaining the exceptional level of collaboration within the team, ensuring clear communication and alignment. Additionally, focus on effectively delivering key features and meeting sprint goals.</p>
+> 
+>
+> ## Stop
+> <p>Avoid neglecting the quality of designs and user experience. It's crucial to prioritize addressing these aspects in future sprints to ensure the success and satisfaction of our users.</p>
+> 
+> 
  
