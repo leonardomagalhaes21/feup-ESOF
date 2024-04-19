@@ -36,6 +36,31 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 20.0),
+              child: Column(
+                children: [
+                  Text(
+                    'FEUP-reUSE',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    'O FEUP-reUSE ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.blue,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
