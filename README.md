@@ -135,7 +135,7 @@ You can find below information and references related with the project managemen
 > <p>End:</p>
 > <img src="/images/BacklogIteration0.png">
 >
-> ### Retrospectives
+> ### Retrospective
 > <p>This iteration does not add any functionalities to the application.</p>
  
 ## Iteration 1
@@ -148,7 +148,7 @@ You can find below information and references related with the project managemen
 > <p>End:</p>
 > <img src="/images/BacklogIteration1End.png">
 >
-> ### Retrospectives
+> ### Retrospective
 > <p>Our team demonstrated exceptional collaboration, effectively delivering key features and meeting sprint goals. Communication was clear and frequent, ensuring everyone stayed informed and aligned. These strengths contributed to the successful completion of tasks and the overall progress of the project.</p>
 >
 > ## Start
