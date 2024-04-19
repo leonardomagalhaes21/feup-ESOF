@@ -9,7 +9,7 @@ import 'message_screen.dart';
 import 'profile_screen.dart';
 
 class AddPublicationScreen extends StatefulWidget {
-  const AddPublicationScreen({super.key});
+  const AddPublicationScreen({Key? key});
 
   @override
   _AddPublicationScreenState createState() => _AddPublicationScreenState();
@@ -21,6 +21,7 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
   late User? _currentUser;
   final ImagePicker _imagePicker = ImagePicker();
   late TextEditingController _descriptionController;
+  late TextEditingController _titleController;
 
   @override
   void initState() {
@@ -28,11 +29,11 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
     _currentUser = _auth.currentUser;
     _publicationImageUrl = '';
     _descriptionController = TextEditingController();
+    _titleController = TextEditingController();
   }
 
-  Future<void> uploadImage() async {
-    final XFile? image =
-        await _imagePicker.pickImage(source: ImageSource.gallery);
+  Future<void> uploadImage(ImageSource source) async {
+    final XFile? image = await _imagePicker.pickImage(source: source);
     if (image == null) return;
 
     List<int> imageBytes = await image.readAsBytes();
@@ -47,6 +48,7 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
       if (_publicationImageUrl.isNotEmpty) {
         DocumentReference publicationRef =
             await FirebaseFirestore.instance.collection('publications').add({
+          'title': _titleController.text,
           'description': _descriptionController.text,
           'publicationImageUrl': _publicationImageUrl,
           'userId': _currentUser!.uid,
@@ -63,6 +65,7 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
     setState(() {
       _publicationImageUrl = '';
       _descriptionController.clear();
+      _titleController.clear();
     });
   }
 
@@ -107,7 +110,35 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton(
-              onPressed: uploadImage,
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SafeArea(
+                      child: Wrap(
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.photo),
+                            title: const Text('Choose from Gallery'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              uploadImage(ImageSource.gallery);
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.camera_alt),
+                            title: const Text('Take a Picture'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              uploadImage(ImageSource.camera);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
               child: const Text('Select Image'),
             ),
             const SizedBox(height: 20),
@@ -121,6 +152,14 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
                     ),
                   )
                 : Container(),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                hintText: 'Enter a title...',
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 20),
             TextField(
               controller: _descriptionController,
@@ -197,6 +236,7 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
   @override
   void dispose() {
     _descriptionController.dispose();
+    _titleController.dispose();
     super.dispose();
   }
 }

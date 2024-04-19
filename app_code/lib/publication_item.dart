@@ -8,7 +8,7 @@ import 'message_screen.dart';
 class PublicationItem extends StatelessWidget {
   final QueryDocumentSnapshot publication;
 
-  const PublicationItem({super.key, required this.publication});
+  const PublicationItem({Key? key, required this.publication});
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +27,19 @@ class PublicationItem extends StatelessWidget {
               .format(publication['timestamp'].toDate());
           var publicationImageUrl = publication['publicationImageUrl'] ?? '';
           var description = publication['description'] ?? '';
+          var title = publication['title'] ?? '';
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   CircleAvatar(
