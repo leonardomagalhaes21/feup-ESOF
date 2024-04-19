@@ -135,7 +135,7 @@ You can find below information and references related with the project managemen
 > <p>End:</p>
 > <img src="/images/BacklogIteration0.png">
 >
-> ### Retrospectives
+> ### Retrospective
 > <p>This iteration does not add any functionalities to the application.</p>
  
 ## Iteration 1
@@ -146,9 +146,20 @@ You can find below information and references related with the project managemen
 > <img src="/images/BacklogIteration1Start.png">
 > <br>
 > <p>End:</p>
+> <img src="/images/BacklogIteration1End.png">
 >
-> ### Soon
+> ### Retrospective
+> <p>Our team demonstrated exceptional collaboration, effectively delivering key features and meeting sprint goals. Communication was clear and frequent, ensuring everyone stayed informed and aligned. These strengths contributed to the successful completion of tasks and the overall progress of the project.</p>
 >
-> ### Retrospectives
-> <p>Soon.</p>
+> ## Start
+> <p>Integrate design templates or frameworks into our development process to streamline the design phase and ensure consistency across our products. By adopting pre-built design elements or templates, we can expedite the design process while maintaining a high standard of visual appeal and usability.</p>
+>
+> ## Continue
+> <p>Continue maintaining the exceptional level of collaboration within the team, ensuring clear communication and alignment. Additionally, focus on effectively delivering key features and meeting sprint goals.</p>
+> 
+>
+> ## Stop
+> <p>Avoid neglecting the quality of designs and user experience. It's crucial to prioritize addressing these aspects in future sprints to ensure the success and satisfaction of our users.</p>
+> 
+> 
  
