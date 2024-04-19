@@ -146,9 +146,11 @@ You can find below information and references related with the project managemen
 > <img src="/images/BacklogIteration1Start.png">
 > <br>
 > <p>End:</p>
->
-> ### Soon
+> <img src="/images/BacklogIteration1End.png">
 >
 > ### Retrospectives
-> <p>Soon.</p>
+> <p>Our team demonstrated exceptional collaboration, effectively delivering key features and meeting sprint goals. Communication was clear and frequent, ensuring everyone stayed informed and aligned. These strengths contributed to the successful completion of tasks and the overall progress of the project.</p>
+> <p>While functionality was achieved, we recognize the need to elevate the quality of our designs. We also need to focus on enhancing the user experience, making our designs more intuitive and user-friendly.</p>
+> <p>This retrospective highlights our achievements in collaboration and delivery while emphasizing the importance of improving design quality for future sprints. </p>
+>
  
