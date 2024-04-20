@@ -103,78 +103,79 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
         centerTitle: true,
         elevation: 4,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SafeArea(
-                      child: Wrap(
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.photo),
-                            title: const Text('Choose from Gallery'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              uploadImage(ImageSource.gallery);
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.camera_alt),
-                            title: const Text('Take a Picture'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              uploadImage(ImageSource.camera);
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              child: const Text('Select Image'),
-            ),
-            const SizedBox(height: 20),
-            _publicationImageUrl.isNotEmpty
-                ? SizedBox(
-                    width: 100,
-                    height: 100,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SafeArea(
+                        child: Wrap(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.photo),
+                              title: const Text('Choose from Gallery'),
+                              onTap: () {
+                                Navigator.pop(context);
+                                uploadImage(ImageSource.gallery);
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.camera_alt),
+                              title: const Text('Take a Picture'),
+                              onTap: () {
+                                Navigator.pop(context);
+                                uploadImage(ImageSource.camera);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: const Text('Select Image'),
+              ),
+              const SizedBox(height: 20),
+              _publicationImageUrl.isNotEmpty
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
                     child: Image.memory(
                       base64.decode(_publicationImageUrl.split(',').last),
-                      fit: BoxFit.cover,
                     ),
                   )
                 : Container(),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                hintText: 'Enter a title...',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter a title...',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                hintText: 'Write a description...',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  hintText: 'Write a description...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: uploadPublication,
-              child: const Text('Upload Publication'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: uploadPublication,
+                child: const Text('Upload Publication'),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(

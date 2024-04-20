@@ -125,8 +125,8 @@ class _OtherProfilesState extends State<OtherProfiles> {
                               children: [
                                 CircleAvatar(
                                   radius: 50,
-                                  backgroundImage: NetworkImage(
-                                      userData['profileImageUrl']),
+                                  backgroundImage:
+                                      NetworkImage(userData['profileImageUrl']),
                                 ),
                                 const SizedBox(height: 10),
                                 // Display star rating
@@ -183,14 +183,20 @@ class _OtherProfilesState extends State<OtherProfiles> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (publication['publicationImageUrl'] != null) ...[
+                                  if (publication['publicationImageUrl'] !=
+                                      null) ...[
                                     FutureBuilder<Widget>(
-                                      future: _decodeBase64Image(publication['publicationImageUrl']),
+                                      future: _decodeBase64Image(
+                                          publication['publicationImageUrl']),
                                       builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return const Center(child: CircularProgressIndicator());
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
                                         } else if (snapshot.hasError) {
-                                          return const Center(child: Icon(Icons.error));
+                                          return const Center(
+                                              child: Icon(Icons.error));
                                         } else {
                                           return snapshot.data!;
                                         }
@@ -257,7 +263,8 @@ class _OtherProfilesState extends State<OtherProfiles> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MessageScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const MessageScreen()),
                 );
               },
             ),
@@ -266,7 +273,8 @@ class _OtherProfilesState extends State<OtherProfiles> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
                 );
               },
             ),
