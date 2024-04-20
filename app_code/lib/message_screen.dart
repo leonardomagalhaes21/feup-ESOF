@@ -58,24 +58,21 @@ class _MessageScreenState extends State<MessageScreen> {
             .where('receiverId', isEqualTo: currentUserUid)
             .get();
 
-        final List<String> distinctPublicationIds = [];
+        // Use a Set to store unique publication IDs
+        final Set<String> distinctPublicationIds = {};
 
         for (var doc in senderMessagesSnapshot.docs) {
           final publicationId = doc['publicationId'] as String;
-          if (!distinctPublicationIds.contains(publicationId)) {
-            distinctPublicationIds.add(publicationId);
-          }
+          distinctPublicationIds.add(publicationId);
         }
 
         for (var doc in receiverMessagesSnapshot.docs) {
           final publicationId = doc['publicationId'] as String;
-          if (!distinctPublicationIds.contains(publicationId)) {
-            distinctPublicationIds.add(publicationId);
-          }
+          distinctPublicationIds.add(publicationId);
         }
 
         setState(() {
-          _distinctPublicationIds = distinctPublicationIds;
+          _distinctPublicationIds = distinctPublicationIds.toList();
         });
       }
     } catch (e) {
@@ -172,102 +169,60 @@ class _MessageScreenState extends State<MessageScreen> {
                               final publicationTitle =
                                   publicationData['title'] as String;
 
-                              return Column(
-                                children: [
-                                  FutureBuilder<List<String>>(
-                                    future: _getBuyerNames(publicationId),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      }
-                                      if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      }
-                                      final buyerNames = snapshot.data ?? [];
-                                      return Column(
-                                        children: buyerNames.map((buyerName) {
-                                          return ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 16.0),
-                                              child: Text(
-                                                '$publicationTitle - $buyerName',
-                                                style: const TextStyle(
-                                                    fontSize: 18.0),
-                                              ),
+                              return ListTile(
+                                title: Text(
+                                  publicationTitle,
+                                  style: const TextStyle(fontSize: 18.0),
+                                ),
+                                leading: FutureBuilder<ImageProvider?>(
+                                  future: decodeImage(recipientImageUrl ?? ''),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.waiting ||
+                                        snapshot.data == null) {
+                                      return CircularProgressIndicator();
+                                    }
+                                    return CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: snapshot.data!,
+                                    );
+                                  },
+                                ),
+                                onTap: () async {
+                                  try {
+                                    final currentUserUid =
+                                        FirebaseAuth.instance.currentUser?.uid;
+                                    if (currentUserUid != null) {
+                                      final sellerId = publicationData['userId'];
+                                      if (currentUserUid == sellerId) {
+                                        // If the current user is the seller, show a dialog to select the client
+                                        _showClientSelectionDialog(context, publicationId);
+                                      } else {
+                                        // If the current user is not the seller, open the chat screen with the seller
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ChatScreen(
+                                              publicationId: publicationId,
+                                              recipientId: sellerId,
+                                              recipientName: recipientName,
                                             ),
-                                            leading:
-                                                FutureBuilder<ImageProvider?>(
-                                              future: decodeImage(
-                                                  recipientImageUrl ?? ''),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                        ConnectionState
-                                                            .waiting ||
-                                                    snapshot.data == null) {
-                                                  return CircularProgressIndicator();
-                                                }
-                                                return CircleAvatar(
-                                                  radius: 30,
-                                                  backgroundImage:
-                                                      snapshot.data!,
-                                                );
-                                              },
-                                            ),
-                                            onTap: () async {
-                                              try {
-                                                final currentUserUid =
-                                                    FirebaseAuth.instance
-                                                        .currentUser?.uid;
-                                                if (currentUserUid != null) {
-                                                  final senderId =
-                                                      currentUserUid;
-                                                  final buyerId =
-                                                      await _getBuyerId(
-                                                          publicationId,
-                                                          senderId);
-                                                  final recipientId = buyerId;
-                                                  final recipientName =
-                                                      buyerName;
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ChatScreen(
-                                                        publicationId:
-                                                            publicationId,
-                                                        recipientId:
-                                                            recipientId,
-                                                        recipientName:
-                                                            recipientName,
-                                                      ),
-                                                    ),
-                                                  );
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'You are not signed in'),
-                                                    ),
-                                                  );
-                                                }
-                                              } catch (e) {
-                                                print('Error: $e');
-                                                Navigator.pop(
-                                                    context); // Close loading dialog
-                                              }
-                                            },
-                                          );
-                                        }).toList(),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('You are not signed in'),
+                                        ),
                                       );
-                                    },
-                                  ),
-                                ],
+                                    }
+                                  } catch (e) {
+                                    print('Error: $e');
+                                    Navigator.pop(context); // Close loading dialog
+                                  }
+                                },
                               );
                             },
                           );
@@ -343,52 +298,99 @@ class _MessageScreenState extends State<MessageScreen> {
     }
   }
 
-  Future<List<String>> _getBuyerNames(String publicationId) async {
-    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+  Future<ImageProvider?> decodeImage(String imageUrl) async {
+    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+    return MemoryImage(Uint8List.fromList(imageBytes));
+  }
+
+  void _showClientSelectionDialog(BuildContext context, String publicationId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Client'),
+          content: SingleChildScrollView(
+            child: FutureBuilder<List<String>>(
+              future: _getDistinctClients(publicationId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                final clientIds = snapshot.data ?? [];
+                return ListBody(
+                  children: clientIds.map((clientId) {
+                    return ListTile(
+                      title: FutureBuilder<String>(
+                        future: _getUserName(clientId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text('Loading...');
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          final clientName = snapshot.data ?? 'Unknown';
+                          return Text(clientName);
+                        },
+                      ),
+                      onTap: () {
+                        _navigateToChatScreen(context, publicationId, clientId);
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<List<String>> _getDistinctClients(String publicationId) async {
     try {
-      final senderMessagesSnapshot = await FirebaseFirestore.instance
+      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+      final messagesSnapshot = await FirebaseFirestore.instance
           .collection('messages')
           .where('publicationId', isEqualTo: publicationId)
           .get();
 
-      final buyerNames = <String>{};
+      final Set<String> distinctClientIds = {};
 
-      for (var doc in senderMessagesSnapshot.docs) {
-        final buyerId = doc['receiverId'] as String;
-        final buyerName = await _getUserName(buyerId);
-        if (buyerId != currentUserUid) {
-          buyerNames.add(buyerName);
+      for (var doc in messagesSnapshot.docs) {
+        final senderId = doc['senderId'] as String;
+        final receiverId = doc['receiverId'] as String;
+        if (senderId == currentUserUid) {
+          distinctClientIds.add(receiverId);
+        } else if (receiverId == currentUserUid) {
+          distinctClientIds.add(senderId);
         }
       }
 
-      return buyerNames.toList();
+      return distinctClientIds.toList();
     } catch (e) {
-      print('Error fetching buyer names: $e');
+      print('Error fetching distinct clients: $e');
       return [];
     }
   }
 
-  Future<String> _getBuyerId(String publicationId, String senderId) async {
-    try {
-      final senderMessagesSnapshot = await FirebaseFirestore.instance
-          .collection('messages')
-          .where('publicationId', isEqualTo: publicationId)
-          .where('senderId', isEqualTo: senderId)
-          .get();
-
-      if (senderMessagesSnapshot.docs.isNotEmpty) {
-        return senderMessagesSnapshot.docs.first['receiverId'] as String;
-      } else {
-        return ''; // If no buyer found, return an empty string
-      }
-    } catch (e) {
-      print('Error fetching buyer ID: $e');
-      return ''; // Handle errors by returning an empty string
-    }
-  }
-
-  Future<ImageProvider?> decodeImage(String imageUrl) async {
-    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
-    return MemoryImage(Uint8List.fromList(imageBytes));
+  void _navigateToChatScreen(BuildContext context, String publicationId, String recipientId) {
+    _getUserName(recipientId).then((recipientName) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            publicationId: publicationId,
+            recipientId: recipientId,
+            recipientName: recipientName,
+          ),
+        ),
+      );
+    }).catchError((error) {
+      print('Error: $error');
+    });
   }
 }
