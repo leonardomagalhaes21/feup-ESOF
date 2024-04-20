@@ -10,8 +10,7 @@ class PublicationItem extends StatelessWidget {
   final double userRating;
 
   const PublicationItem(
-      {Key? key, required this.publication, required this.userRating})
-      : super(key: key);
+      {super.key, required this.publication, required this.userRating});
 
   Future<int> getUserRating(String userId) async {
     var doc = await FirebaseFirestore.instance
@@ -24,7 +23,7 @@ class PublicationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
         Padding(
@@ -33,7 +32,7 @@ class PublicationItem extends StatelessWidget {
             future: getUserDetails(publication['userId']),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return SizedBox();
+                return const SizedBox();
               }
               var user = snapshot.data!;
               var userName = user['name'] ?? 'Unknown';
@@ -93,7 +92,7 @@ class PublicationItem extends StatelessWidget {
                       if (imageSnapshot.connectionState ==
                               ConnectionState.waiting ||
                           imageSnapshot.data == null) {
-                        return SizedBox();
+                        return const SizedBox();
                       }
                       double screenWidth = MediaQuery.of(context).size.width;
                       return Image(
