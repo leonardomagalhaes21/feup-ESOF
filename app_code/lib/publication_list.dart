@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'publication_item.dart';
 
 class PublicationList extends StatefulWidget {
-  const PublicationList({super.key});
+  const PublicationList({Key? key}) : super(key: key);
 
   @override
   _PublicationListState createState() => _PublicationListState();
@@ -32,9 +32,9 @@ class _PublicationListState extends State<PublicationList> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
             controller: _searchController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Search by title',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(),
             ),
             onChanged: _filterPublications,
@@ -66,7 +66,7 @@ class _PublicationListState extends State<PublicationList> {
               return FutureBuilder<QuerySnapshot>(
                 future: FirebaseFirestore.instance
                     .collection('ratings')
-                    .get(), // Fetch ratings
+                    .get(), 
                 builder: (context, ratingsSnapshot) {
                   if (ratingsSnapshot.connectionState ==
                       ConnectionState.waiting) {
