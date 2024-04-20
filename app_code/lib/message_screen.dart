@@ -24,7 +24,7 @@ class ChatMessage {
 }
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({Key? key}) : super(key: key);
+  const MessageScreen({super.key});
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -169,8 +169,16 @@ class _MessageScreenState extends State<MessageScreen> {
                                       return Column(
                                         children: buyerNames.map((buyerName) {
                                           return ListTile(
-                                            title: Text('$publicationTitle - $buyerName'),
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                              child: Text(
+                                                '$publicationTitle - $buyerName',
+                                                style: const TextStyle(fontSize: 18.0),
+                                              ),
+                                            ),
                                             leading: CircleAvatar(
+                                              radius: 30,
                                               backgroundImage: NetworkImage(recipientImageUrl ?? ''), // If no image URL provided, use empty string
                                             ),
                                             onTap: () async {
