@@ -3,12 +3,12 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'chat_screen.dart';
+import 'message_screen.dart';
 
 class PublicationItem extends StatelessWidget {
   final QueryDocumentSnapshot publication;
 
-  const PublicationItem({Key? key, required this.publication});
+  const PublicationItem({super.key, required this.publication});
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +27,10 @@ class PublicationItem extends StatelessWidget {
               .format(publication['timestamp'].toDate());
           var publicationImageUrl = publication['publicationImageUrl'] ?? '';
           var description = publication['description'] ?? '';
-          var title = publication['title'] ?? '';
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
               Row(
                 children: [
                   CircleAvatar(
@@ -88,14 +79,12 @@ class PublicationItem extends StatelessWidget {
                 onPressed: () {
                   String sellerId = publication['userId'];
                   String sellerName = user['name'] ?? 'Unknown';
-                  String publicationId = publication.id;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ChatScreen(
                         recipientId: sellerId,
                         recipientName: sellerName,
-                        publicationId: publicationId,
                       ),
                     ),
                   );
