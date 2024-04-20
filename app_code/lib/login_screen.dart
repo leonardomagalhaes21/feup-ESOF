@@ -36,6 +36,32 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 20.0),
+              child: Column(
+                children: [
+                  Text(
+                    'FEUP-reUSE',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // Título em preto
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    'O FEUP-reUSE ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black, // Descrição em preto
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
@@ -58,6 +84,47 @@ class LoginScreen extends StatelessWidget {
                 );
               },
               child: const Text('Register'),
+            ),
+            const SizedBox(height: 32.0), // Aumentando o espaço abaixo dos botões
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Reutiliza',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black, // Rs em preto
+                  ),
+                ),
+                Text(
+                  '.',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black, // Rs em preto
+                  ),
+                ),
+                Text(
+                  ' Reduz',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black, // Rs em preto
+                  ),
+                ),
+                Text(
+                  '.',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black, // Rs em preto
+                  ),
+                ),
+                Text(
+                  ' Recicla.',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black, // Rs em preto
+                  ),
+                ),
+              ],
             ),
           ],
         ),
