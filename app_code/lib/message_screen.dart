@@ -4,44 +4,43 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
+import 'chat_screen.dart';
 import 'profile_screen.dart';
-import 'package:intl/intl.dart';
-
 
 class ChatMessage {
   final String sender;
   final String receiver;
   final String content;
   final DateTime timestamp;
+  final String publicationId;
 
   ChatMessage({
     required this.sender,
     required this.receiver,
     required this.content,
     required this.timestamp,
+    required this.publicationId,
   });
 }
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key});
+  const MessageScreen({Key? key}) : super(key: key);
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  final List<ChatMessage> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
-  final String _selectedRecipientId = '';
-  List<DocumentSnapshot> _allUsers = [];
+  List<String> _distinctPublicationIds = [];
 
   @override
   void initState() {
     super.initState();
-    _getAllUsers();
+    _getAllPublicationIds();
   }
 
-  Future<void> _getAllUsers() async {
+  Future<void> _getAllPublicationIds() async {
     try {
       final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
       if (currentUserUid != null) {
@@ -55,34 +54,30 @@ class _MessageScreenState extends State<MessageScreen> {
             .where('receiverId', isEqualTo: currentUserUid)
             .get();
 
-        final List<String> distinctUserIds = [];
-        for (var doc in senderMessagesSnapshot.docs) {
-          final receiverId = doc['receiverId'] as String;
-          if (!distinctUserIds.contains(receiverId)) {
-            distinctUserIds.add(receiverId);
-          }
-        }
-        for (var doc in receiverMessagesSnapshot.docs) {
-          final senderId = doc['senderId'] as String;
-          if (!distinctUserIds.contains(senderId)) {
-            distinctUserIds.add(senderId);
-          }
-        }
+        final List<String> distinctPublicationIds = [];
 
-        final QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .where(FieldPath.documentId, whereIn: distinctUserIds)
-            .get();
+        for (var doc in senderMessagesSnapshot.docs) {
+          final publicationId = doc['publicationId'] as String;
+          if (!distinctPublicationIds.contains(publicationId)) {
+            distinctPublicationIds.add(publicationId);
+          }
+        }
+        
+        for (var doc in receiverMessagesSnapshot.docs) {
+          final publicationId = doc['publicationId'] as String;
+          if (!distinctPublicationIds.contains(publicationId)) {
+            distinctPublicationIds.add(publicationId);
+          }
+        }
 
         setState(() {
-          _allUsers = usersSnapshot.docs;
+          _distinctPublicationIds = distinctPublicationIds;
         });
       }
     } catch (e) {
-      print('Error fetching users: $e');
+      print('Error fetching publication ids: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -121,35 +116,121 @@ class _MessageScreenState extends State<MessageScreen> {
       body: Column(
         children: [
           Expanded(
-          child: _allUsers.isEmpty
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: _allUsers.length,
-                  itemBuilder: (context, index) {
-                    final user = _allUsers[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(user['profileImageUrl']),
-                        radius: 20, 
-                      ),
-                      title: Text(user['name']),
-                      onTap: () async {
-                        String recipientId = user.id;
-                        String recipientName = await _getUserName(recipientId);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatScreen(
-                              recipientId: recipientId,
-                              recipientName: recipientName,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-        ),
+            child: _distinctPublicationIds.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: _distinctPublicationIds.length,
+                    itemBuilder: (context, index) {
+                      final publicationId = _distinctPublicationIds[index];
+
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance.collection('publications').doc(publicationId).get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          final publicationData = snapshot.data?.data() as Map<String, dynamic>?; // Explicitly cast to Map<String, dynamic> or null
+                          if (publicationData == null) {
+                            return const Text('Publication not found');
+                          }
+                          final userId = publicationData['userId'] as String;
+                          return FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              }
+                              if (userSnapshot.hasError) {
+                                return Text('Error: ${userSnapshot.error}');
+                              }
+                              final userData = userSnapshot.data?.data() as Map<String, dynamic>?; // Explicitly cast to Map<String, dynamic> or null
+                              if (userData == null) {
+                                return const Text('User not found');
+                              }
+                              final recipientName = userData['name'] as String;
+                              final recipientImageUrl = userData['profileImageUrl'] as String?;
+                              final publicationTitle = publicationData['title'] as String;
+                              
+                              return ListTile(
+                                title: Text(publicationTitle),
+                                subtitle: Text(recipientName),
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(recipientImageUrl ?? ''), // If no image URL provided, use empty string
+                                ),
+                                onTap: () async {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false, // Prevent dialog from being dismissed by tapping outside
+                                    builder: (BuildContext context) {
+                                      return Center(
+                                        child: CircularProgressIndicator(), // Show loading indicator
+                                      );
+                                    },
+                                  );
+
+                                  try {
+                                    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+                                    if (currentUserUid != null) {
+                                      final publicationId = _distinctPublicationIds[index];
+                                      final senderId = currentUserUid;
+                                      String? buyerId;
+                                      final senderMessagesSnapshot = await FirebaseFirestore.instance
+                                        .collection('messages')
+                                        .where('publicationId', isEqualTo: publicationId)
+                                        .where('senderId', isEqualTo: senderId)
+                                        .get();
+                                      final receiverMessagesSnapshot = await FirebaseFirestore.instance
+                                        .collection('messages')
+                                        .where('publicationId', isEqualTo: publicationId)
+                                        .where('receiverId', isEqualTo: senderId)
+                                        .get();
+
+                                      if (senderMessagesSnapshot.docs.isNotEmpty) {
+                                        buyerId = senderMessagesSnapshot.docs.first['receiverId'] as String;
+                                      } else if (receiverMessagesSnapshot.docs.isNotEmpty) {
+                                        buyerId = receiverMessagesSnapshot.docs.first['senderId'] as String;
+                                      } else {
+                                        print('No messages found for this publication');
+                                        return;
+                                      }
+
+                                      final recipientId = buyerId;
+                                      final recipientName = await _getUserName(recipientId);
+                                      Navigator.pop(context); // Close loading dialog
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ChatScreen(
+                                            publicationId: publicationId,
+                                            recipientId: recipientId,
+                                            recipientName: recipientName,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('You are not signed in'),
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    print('Error: $e');
+                                    Navigator.pop(context); // Close loading dialog
+                                  }
+                                },
+                              );
+
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
@@ -214,255 +295,5 @@ class _MessageScreenState extends State<MessageScreen> {
       print('Error fetching user name: $e');
       return '';
     }
-  }
-}
-
-class ChatScreen extends StatefulWidget {
-  final String recipientId;
-  final String recipientName;
-
-  const ChatScreen({
-    required this.recipientId,
-    required this.recipientName,
-    super.key,
-  });
-
-  @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _textEditingController = TextEditingController();
-  late Stream<List<ChatMessage>> _messagesStream;
-  late Map<String, String> _userNames = {};
-
-  @override
-  void initState() {
-    super.initState();
-    String senderId = FirebaseAuth.instance.currentUser?.uid ?? ''; // Get current user's ID
-    _messagesStream = _getMessagesStream(senderId, widget.recipientId);
-    _loadUserNames();
-  }
-
-  Stream<List<ChatMessage>> _getMessagesStream(String senderId, String recipientId) {
-    return FirebaseFirestore.instance
-        .collection('messages')
-        .orderBy('timestamp', descending: true) // Sort by timestamp in descending order
-        .snapshots()
-        .map((snapshot) {
-      List<ChatMessage> messages = [];
-      for (var doc in snapshot.docs) {
-        if ((doc['senderId'] == senderId && doc['receiverId'] == recipientId) ||
-            (doc['senderId'] == recipientId && doc['receiverId'] == senderId)) {
-          messages.add(
-            ChatMessage(
-              sender: doc['senderId'],
-              receiver: doc['receiverId'],
-              content: doc['content'],
-              timestamp: (doc['timestamp'] as Timestamp).toDate(),
-            ),
-          );
-        }
-      }
-      return messages;
-    });
-  }
-
-  Future<void> _loadUserNames() async {
-    try {
-      final usersSnapshot = await FirebaseFirestore.instance.collection('users').get();
-      final Map<String, String> userNames = {};
-      for (var doc in usersSnapshot.docs) {
-        userNames[doc.id] = doc['name'] as String;
-      }
-      setState(() {
-        _userNames = userNames;
-      });
-    } catch (e) {
-      print('Error loading user names: $e');
-    }
-  }
-
-  void _sendMessage() {
-    String messageText = _textEditingController.text.trim();
-    if (messageText.isNotEmpty) {
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        try {
-          FirebaseFirestore.instance.collection('messages').add({
-            'senderId': currentUser.uid,
-            'receiverId': widget.recipientId,
-            'content': messageText,
-            'timestamp': Timestamp.now(),
-          });
-          _textEditingController.clear();
-        } catch (e) {
-          print('Error sending message: $e');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to send message. Please try again.'),
-            ),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('You are not signed in'),
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Chat with ${widget.recipientName}'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<ChatMessage>>(
-              stream: _messagesStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                  List<ChatMessage> messages = snapshot.data ?? [];
-                  return ListView.builder(
-                    reverse: true,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final message = messages[index];
-                      final isCurrentUser = message.sender == FirebaseAuth.instance.currentUser?.uid;
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                        child: Column(
-                          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _userNames[message.sender] ?? 'Unknown',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(12.0),
-                              decoration: BoxDecoration(
-                                color: isCurrentUser ? Colors.blue : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              child: Text(
-                                message.content,
-                                style: TextStyle(color: isCurrentUser ? Colors.white : Colors.black),
-                              ),
-                            ),
-                            Text(
-                              DateFormat.yMd().add_jm().format(message.timestamp),
-                              style: const TextStyle(fontSize: 10.0),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(240, 240, 240, 1), // Background color
-              borderRadius: BorderRadius.circular(30.0), // Rounded corners
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Shadow color
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3), // Changes position of shadow
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      controller: _textEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Type a message',
-                        border: InputBorder.none, // Remove border
-                        hintStyle: TextStyle(color: Colors.grey[500]), // Hint color
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MainScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SearchScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddPublicationScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.message),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MessageScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

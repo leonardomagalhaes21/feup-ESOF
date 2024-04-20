@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'message_screen.dart';
+import 'chat_screen.dart';
 
 class PublicationItem extends StatelessWidget {
   final QueryDocumentSnapshot publication;
@@ -88,12 +88,14 @@ class PublicationItem extends StatelessWidget {
                 onPressed: () {
                   String sellerId = publication['userId'];
                   String sellerName = user['name'] ?? 'Unknown';
+                  String publicationId = publication.id;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ChatScreen(
                         recipientId: sellerId,
                         recipientName: sellerName,
+                        publicationId: publicationId,
                       ),
                     ),
                   );
