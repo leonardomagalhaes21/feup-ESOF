@@ -35,11 +35,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _getCurrentUser() async {
-    _currentUser = FirebaseAuth.instance.currentUser;
-    if (_currentUser != null) {
-      loadUserProfile();
-    } else {}
+  _currentUser = FirebaseAuth.instance.currentUser;
+  if (_currentUser != null) {
+    setState(() {
+      _profileImageUrl = '';
+    });
+    await loadUserProfile(); 
   }
+}
+
 
   Future<void> loadUserProfile() async {
     try {
@@ -79,12 +83,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: _profileImageUrl.isNotEmpty
-                      ? NetworkImage(_profileImageUrl)
-                      : null,
-                ),
+                FutureBuilder<ImageProvider?>(
+                    future: decodeImage(_profileImageUrl),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                              ConnectionState.waiting ||
+                          snapshot.data == null) {
+                        return CircularProgressIndicator();
+                      }
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: snapshot.data!,
+                      );
+                    },
+                  ),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,3 +352,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+Future<ImageProvider?> decodeImage(String imageUrl) async {
+    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+    return MemoryImage(Uint8List.fromList(imageBytes));
+  }

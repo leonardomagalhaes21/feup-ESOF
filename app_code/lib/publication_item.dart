@@ -14,14 +14,14 @@ class PublicationItem extends StatelessWidget {
       : super(key: key);
 
   Future<double> getUserRating(String userId) async {
-  var doc = await FirebaseFirestore.instance
-      .collection('ratings')
-      .doc(userId)
-      .get();
-  double rating = doc.exists ? (doc['rating'] as num?)?.toDouble() ?? 0.0 : 0.0;
-  return rating;
-}
-
+    var doc = await FirebaseFirestore.instance
+        .collection('ratings')
+        .doc(userId)
+        .get();
+    double rating =
+        doc.exists ? (doc['rating'] as num?)?.toDouble() ?? 0.0 : 0.0;
+    return rating;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +56,19 @@ class PublicationItem extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(profileImageUrl),
+                  FutureBuilder<ImageProvider?>(
+                    future: decodeImage(profileImageUrl),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                              ConnectionState.waiting ||
+                          snapshot.data == null) {
+                        return CircularProgressIndicator();
+                      }
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: snapshot.data!,
+                      );
+                    },
                   ),
                   const SizedBox(width: 8),
                   Column(
@@ -93,7 +103,7 @@ class PublicationItem extends StatelessWidget {
                   if (imageSnapshot.connectionState ==
                           ConnectionState.waiting ||
                       imageSnapshot.data == null) {
-                    return SizedBox();
+                    return CircularProgressIndicator();
                   }
                   double screenWidth = MediaQuery.of(context).size.width;
                   return Image(

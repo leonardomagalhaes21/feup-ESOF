@@ -6,8 +6,7 @@ import 'search_screen.dart';
 import 'add_publication_screen.dart';
 import 'profile_screen.dart';
 import 'message_screen.dart';
-import 'package:timeago/timeago.dart' as timeago;
-
+import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
   final String recipientId;
@@ -169,22 +168,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         child: Column(
                           crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.only(bottom: 4.0),
-                              child: Row(
-                                mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _userNames[message.sender] ?? 'Unknown',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    timeago.format(message.timestamp),
-                                    style: const TextStyle(fontSize: 10.0),
-                                  ),
-                                ],
-                              ),
+                            Text(
+                              _userNames[message.sender] ?? 'Unknown',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Container(
                               padding: const EdgeInsets.all(12.0),
@@ -196,6 +182,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                 message.content,
                                 style: TextStyle(color: isCurrentUser ? Colors.white : Colors.black),
                               ),
+                            ),
+                            Text(
+                              DateFormat.yMd().add_jm().format(message.timestamp),
+                              style: const TextStyle(fontSize: 10.0),
                             ),
                           ],
                         ),
