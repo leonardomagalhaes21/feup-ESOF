@@ -154,76 +154,63 @@ class _MessageScreenState extends State<MessageScreen> {
                               final recipientImageUrl = userData['profileImageUrl'] as String?;
                               final publicationTitle = publicationData['title'] as String;
                               
-                              return ListTile(
-                                title: Text(publicationTitle),
-                                subtitle: Text(recipientName),
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(recipientImageUrl ?? ''), // If no image URL provided, use empty string
-                                ),
-                                onTap: () async {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false, // Prevent dialog from being dismissed by tapping outside
-                                    builder: (BuildContext context) {
-                                      return Center(
-                                        child: CircularProgressIndicator(), // Show loading indicator
+                              return Column(
+                                children: [
+                                  FutureBuilder<List<String>>(
+                                    future: _getBuyerNames(publicationId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      final buyerNames = snapshot.data ?? [];
+                                      return Column(
+                                        children: buyerNames.map((buyerName) {
+                                          return ListTile(
+                                            title: Text('$publicationTitle - $buyerName'),
+                                            leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(recipientImageUrl ?? ''), // If no image URL provided, use empty string
+                                            ),
+                                            onTap: () async {
+
+                                              try {
+                                                final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+                                                if (currentUserUid != null) {
+                                                  final senderId = currentUserUid;
+                                                  final buyerId = await _getBuyerId(publicationId, senderId);
+                                                  final recipientId = buyerId;
+                                                  final recipientName = buyerName;
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => ChatScreen(
+                                                        publicationId: publicationId,
+                                                        recipientId: recipientId,
+                                                        recipientName: recipientName,
+                                                      ),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text('You are not signed in'),
+                                                    ),
+                                                  );
+                                                }
+                                              } catch (e) {
+                                                print('Error: $e');
+                                                Navigator.pop(context); // Close loading dialog
+                                              }
+                                            },
+                                          );
+                                        }).toList(),
                                       );
                                     },
-                                  );
-
-                                  try {
-                                    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-                                    if (currentUserUid != null) {
-                                      final publicationId = _distinctPublicationIds[index];
-                                      final senderId = currentUserUid;
-                                      String? buyerId;
-                                      final senderMessagesSnapshot = await FirebaseFirestore.instance
-                                        .collection('messages')
-                                        .where('publicationId', isEqualTo: publicationId)
-                                        .where('senderId', isEqualTo: senderId)
-                                        .get();
-                                      final receiverMessagesSnapshot = await FirebaseFirestore.instance
-                                        .collection('messages')
-                                        .where('publicationId', isEqualTo: publicationId)
-                                        .where('receiverId', isEqualTo: senderId)
-                                        .get();
-
-                                      if (senderMessagesSnapshot.docs.isNotEmpty) {
-                                        buyerId = senderMessagesSnapshot.docs.first['receiverId'] as String;
-                                      } else if (receiverMessagesSnapshot.docs.isNotEmpty) {
-                                        buyerId = receiverMessagesSnapshot.docs.first['senderId'] as String;
-                                      } else {
-                                        print('No messages found for this publication');
-                                        return;
-                                      }
-
-                                      final recipientId = buyerId;
-                                      final recipientName = await _getUserName(recipientId);
-                                      Navigator.pop(context); // Close loading dialog
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ChatScreen(
-                                            publicationId: publicationId,
-                                            recipientId: recipientId,
-                                            recipientName: recipientName,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('You are not signed in'),
-                                        ),
-                                      );
-                                    }
-                                  } catch (e) {
-                                    print('Error: $e');
-                                    Navigator.pop(context); // Close loading dialog
-                                  }
-                                },
+                                  ),
+                                ],
                               );
-
                             },
                           );
                         },
@@ -294,6 +281,51 @@ class _MessageScreenState extends State<MessageScreen> {
     } catch (e) {
       print('Error fetching user name: $e');
       return '';
+    }
+  }
+
+  Future<List<String>> _getBuyerNames(String publicationId) async {
+    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+    try {
+      final senderMessagesSnapshot = await FirebaseFirestore.instance
+          .collection('messages')
+          .where('publicationId', isEqualTo: publicationId)
+          .get();
+
+      final buyerNames = <String>{};
+
+      for (var doc in senderMessagesSnapshot.docs) {
+        final buyerId = doc['receiverId'] as String;
+        final buyerName = await _getUserName(buyerId);
+        if (buyerId != currentUserUid){
+          buyerNames.add(buyerName);
+        }
+      }
+
+      return buyerNames.toList();
+    } catch (e) {
+      print('Error fetching buyer names: $e');
+      return [];
+    }
+  }
+
+  Future<String> _getBuyerId(String publicationId, String senderId) async {
+    try {
+      final senderMessagesSnapshot = await FirebaseFirestore.instance
+          .collection('messages')
+          .where('publicationId', isEqualTo: publicationId)
+          .where('senderId', isEqualTo: senderId)
+          .get();
+
+      if (senderMessagesSnapshot.docs.isNotEmpty) {
+        return senderMessagesSnapshot.docs.first['receiverId'] as String;
+      } 
+      else {
+        return ''; // If no buyer found, return an empty string
+      }
+    } catch (e) {
+      print('Error fetching buyer ID: $e');
+      return ''; // Handle errors by returning an empty string
     }
   }
 }
