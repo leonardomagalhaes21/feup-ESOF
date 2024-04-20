@@ -170,6 +170,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   publicationData['title'] as String;
 
                               return ListTile(
+                                contentPadding: EdgeInsets.all(8.0),
                                 title: Text(
                                   publicationTitle,
                                   style: const TextStyle(fontSize: 18.0),
@@ -307,46 +308,74 @@ class _MessageScreenState extends State<MessageScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Select Client'),
-          content: SingleChildScrollView(
-            child: FutureBuilder<List<String>>(
-              future: _getDistinctClients(publicationId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                final clientIds = snapshot.data ?? [];
-                return ListBody(
-                  children: clientIds.map((clientId) {
-                    return ListTile(
-                      title: FutureBuilder<String>(
-                        future: _getUserName(clientId),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Text('Loading...');
-                          }
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          final clientName = snapshot.data ?? 'Unknown';
-                          return Text(clientName);
-                        },
-                      ),
-                      onTap: () {
-                        _navigateToChatScreen(context, publicationId, clientId);
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-            ),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
           ),
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          child: _buildClientSelectionDialogContent(publicationId),
         );
       },
+    );
+  }
+
+  Widget _buildClientSelectionDialogContent(String publicationId) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Select Client',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20.0),
+          FutureBuilder<List<String>>(
+            future: _getDistinctClients(publicationId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              final clientIds = snapshot.data ?? [];
+              return Column(
+                children: clientIds.map((clientId) {
+                  return ListTile(
+                    title: FutureBuilder<String>(
+                      future: _getUserName(clientId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text('Loading...');
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        final clientName = snapshot.data ?? 'Unknown';
+                        return Text(clientName);
+                      },
+                    ),
+                    onTap: () {
+                      _navigateToChatScreen(context, publicationId, clientId);
+                    },
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
