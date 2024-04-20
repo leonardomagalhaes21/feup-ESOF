@@ -80,8 +80,9 @@ class _PublicationListState extends State<PublicationList> {
                   // Map user IDs to their ratings
                   final Map<String, double> userRatings = {
                     for (final doc in ratingsSnapshot.data!.docs)
-                      doc.id: doc['rating'] ?? 0,
+                      doc.id: (doc['rating'] ?? 0.0).toDouble(),
                   };
+
 
                   final List<QueryDocumentSnapshot> filteredPublications =
                       _getFilteredPublications(snapshot.data!.docs);
@@ -90,7 +91,7 @@ class _PublicationListState extends State<PublicationList> {
                     itemBuilder: (context, index) {
                       var publication = filteredPublications[index];
                       var userId = publication['userId'];
-                      var userRating = userRatings[userId] ?? 0;
+                      var userRating = userRatings[userId] ?? 0.0; 
                       return PublicationItem(
                           publication: publication, userRating: userRating);
                     },
