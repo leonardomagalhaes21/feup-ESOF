@@ -37,8 +37,8 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.only(bottom: 20.0),
-              child: Column(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: const Column(
                 children: [
                   Text(
                     'FEUP-reUSE',
@@ -49,7 +49,7 @@ class LoginScreen extends StatelessWidget {
                       color: Colors.black, // Título em preto
                     ),
                   ),
-                  const SizedBox(height: 8.0),
+                  SizedBox(height: 8.0),
                   Text(
                     'O FEUP-reUSE ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
                     style: TextStyle(
@@ -86,7 +86,7 @@ class LoginScreen extends StatelessWidget {
               child: const Text('Register'),
             ),
             const SizedBox(height: 32.0), // Aumentando o espaço abaixo dos botões
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
