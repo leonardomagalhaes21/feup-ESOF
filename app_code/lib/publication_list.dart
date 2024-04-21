@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'publication_item.dart';
 
 class PublicationList extends StatefulWidget {
-  const PublicationList({Key? key}) : super(key: key);
+  const PublicationList({super.key});
 
   @override
   _PublicationListState createState() => _PublicationListState();
@@ -32,9 +32,9 @@ class _PublicationListState extends State<PublicationList> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: TextField(
             controller: _searchController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Search by title',
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(),
             ),
             onChanged: _filterPublications,

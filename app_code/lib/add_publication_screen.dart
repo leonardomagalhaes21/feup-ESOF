@@ -144,7 +144,7 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
               ),
               const SizedBox(height: 20),
               _publicationImageUrl.isNotEmpty
-                ? Container(
+                ? SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
                     child: Image.memory(
