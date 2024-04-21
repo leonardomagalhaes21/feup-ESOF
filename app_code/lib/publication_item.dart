@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'chat_screen.dart';
 
 class PublicationItem extends StatelessWidget {
@@ -10,8 +11,7 @@ class PublicationItem extends StatelessWidget {
   final double userRating;
 
   const PublicationItem(
-      {Key? key, required this.publication, required this.userRating})
-      : super(key: key);
+      {super.key, required this.publication, required this.userRating});
 
   Future<double> getUserRating(String userId) async {
     var doc = await FirebaseFirestore.instance
@@ -31,7 +31,7 @@ class PublicationItem extends StatelessWidget {
         future: getUserDetails(publication['userId']),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox();
+            return const SizedBox();
           }
           var user = snapshot.data!;
           var userName = user['name'] ?? 'Unknown';
@@ -62,7 +62,7 @@ class PublicationItem extends StatelessWidget {
                       if (snapshot.connectionState ==
                               ConnectionState.waiting ||
                           snapshot.data == null) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                       return CircleAvatar(
                         radius: 20,
@@ -103,7 +103,7 @@ class PublicationItem extends StatelessWidget {
                   if (imageSnapshot.connectionState ==
                           ConnectionState.waiting ||
                       imageSnapshot.data == null) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                   double screenWidth = MediaQuery.of(context).size.width;
                   return Image(
@@ -116,6 +116,7 @@ class PublicationItem extends StatelessWidget {
               const SizedBox(height: 8),
               Text(description),
               const SizedBox(height: 8),
+              if (publication['userId'] != FirebaseAuth.instance.currentUser?.uid)
               ElevatedButton.icon(
                 onPressed: () {
                   String sellerId = publication['userId'];

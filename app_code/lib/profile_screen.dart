@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (snapshot.connectionState ==
                               ConnectionState.waiting ||
                           snapshot.data == null) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                       return CircleAvatar(
                         radius: 20,
