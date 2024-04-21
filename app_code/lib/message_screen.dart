@@ -26,7 +26,7 @@ class ChatMessage {
 }
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({Key? key}) : super(key: key);
+  const MessageScreen({super.key});
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -114,124 +114,11 @@ class _MessageScreenState extends State<MessageScreen> {
         centerTitle: true,
         elevation: 4,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _distinctPublicationIds.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: _distinctPublicationIds.length,
-                    itemBuilder: (context, index) {
-                      final publicationId = _distinctPublicationIds[index];
-
-                      return FutureBuilder<DocumentSnapshot>(
-                        future: FirebaseFirestore.instance
-                            .collection('publications')
-                            .doc(publicationId)
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          }
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          final publicationData = snapshot.data?.data() as Map<
-                              String,
-                              dynamic>?; // Explicitly cast to Map<String, dynamic> or null
-                          if (publicationData == null) {
-                            return const Text('Publication not found');
-                          }
-                          final userId = publicationData['userId'] as String;
-                          return FutureBuilder<DocumentSnapshot>(
-                            future: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(userId)
-                                .get(),
-                            builder: (context, userSnapshot) {
-                              if (userSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              }
-                              if (userSnapshot.hasError) {
-                                return Text('Error: ${userSnapshot.error}');
-                              }
-                              final userData = userSnapshot.data?.data() as Map<
-                                  String,
-                                  dynamic>?; // Explicitly cast to Map<String, dynamic> or null
-                              if (userData == null) {
-                                return const Text('User not found');
-                              }
-                              final recipientName = userData['name'] as String;
-                              final recipientImageUrl =
-                                  userData['profileImageUrl'] as String?;
-                              final publicationTitle =
-                                  publicationData['title'] as String;
-
-                              return ListTile(
-                                title: Text(
-                                  publicationTitle,
-                                  style: const TextStyle(fontSize: 18.0),
-                                ),
-                                leading: FutureBuilder<ImageProvider?>(
-                                  future: decodeImage(recipientImageUrl ?? ''),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                            ConnectionState.waiting ||
-                                        snapshot.data == null) {
-                                      return CircularProgressIndicator();
-                                    }
-                                    return CircleAvatar(
-                                      radius: 30,
-                                      backgroundImage: snapshot.data!,
-                                    );
-                                  },
-                                ),
-                                onTap: () async {
-                                  try {
-                                    final currentUserUid =
-                                        FirebaseAuth.instance.currentUser?.uid;
-                                    if (currentUserUid != null) {
-                                      final sellerId = publicationData['userId'];
-                                      if (currentUserUid == sellerId) {
-                                        // If the current user is the seller, show a dialog to select the client
-                                        _showClientSelectionDialog(context, publicationId);
-                                      } else {
-                                        // If the current user is not the seller, open the chat screen with the seller
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ChatScreen(
-                                              publicationId: publicationId,
-                                              recipientId: sellerId,
-                                              recipientName: recipientName,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('You are not signed in'),
-                                        ),
-                                      );
-                                    }
-                                  } catch (e) {
-                                    print('Error: $e');
-                                    Navigator.pop(context); // Close loading dialog
-                                  }
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-          ),
-        ],
+      body: ListView.builder(
+        itemCount: _distinctPublicationIds.length,
+        itemBuilder: (context, index) {
+          return _buildChatTab(_distinctPublicationIds[index]);
+        },
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -285,6 +172,224 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
+  Future<List<String>> _getClientIds(String publicationId) async {
+  try {
+    final messagesSnapshot = await FirebaseFirestore.instance
+        .collection('messages')
+        .where('publicationId', isEqualTo: publicationId)
+        .get();
+
+    final Set<String> distinctClientIds = {};
+
+    for (var doc in messagesSnapshot.docs) {
+      final senderId = doc['senderId'] as String;
+      final receiverId = doc['receiverId'] as String;
+      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserUid != null) {
+        if (senderId == currentUserUid) {
+          distinctClientIds.add(receiverId);
+        } else if (receiverId == currentUserUid) {
+          distinctClientIds.add(senderId);
+        }
+      }
+    }
+
+    return distinctClientIds.toList();
+  } catch (e) {
+    print('Error fetching client IDs: $e');
+    return [];
+  }
+}
+
+void _navigateToChatScreen(BuildContext context, String publicationId, String recipientId) {
+  _getUserName(recipientId).then((recipientName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatScreen(
+          publicationId: publicationId,
+          recipientId: recipientId,
+          recipientName: recipientName,
+        ),
+      ),
+    );
+  }).catchError((error) {
+    print('Error: $error');
+  });
+}
+
+
+
+Widget _buildChatTab(String publicationId) {
+  return FutureBuilder<DocumentSnapshot>(
+    future: FirebaseFirestore.instance
+        .collection('publications')
+        .doc(publicationId)
+        .get(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      }
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      final publicationData =
+          snapshot.data?.data() as Map<String, dynamic>?; // Explicitly cast to Map<String, dynamic> or null
+      if (publicationData == null) {
+        return const Text('Publication not found');
+      }
+      final userId = publicationData['userId'] as String;
+      return FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
+        builder: (context, userSnapshot) {
+          if (userSnapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (userSnapshot.hasError) {
+            return Text('Error: ${userSnapshot.error}');
+          }
+          final userData =
+              userSnapshot.data?.data() as Map<String, dynamic>?; // Explicitly cast to Map<String, dynamic> or null
+          if (userData == null) {
+            return const Text('User not found');
+          }
+          final recipientName = userData['name'] as String;
+          final recipientImageUrl = userData['profileImageUrl'] as String?;
+          final publicationTitle = publicationData['title'] as String;
+          final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+
+          // Check if the current user is the seller of the publication
+          final bool isCurrentUserSeller = currentUserUid == userId;
+
+          // If current user is the seller, display additional rows with client names
+          if (isCurrentUserSeller) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Display additional rows with client names
+                FutureBuilder<List<String>>(
+                  future: _getClientIds(publicationId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    final clientIds = snapshot.data ?? [];
+                    return Column(
+                      children: clientIds.map((clientId) {
+                        return FutureBuilder<String>(
+                          future: _getUserName(clientId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            final clientName = snapshot.data ?? 'Unknown';
+                            return ListTile(
+                              contentPadding: const EdgeInsets.all(8.0),
+                              title: Text(
+                                '$publicationTitle - $clientName',
+                                style: const TextStyle(fontSize: 18.0),
+                              ),
+                              leading: FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance.collection('users').doc(clientId).get(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Icon(Icons.error); 
+                                  }
+                                  final clientData = snapshot.data?.data() as Map<String, dynamic>?;
+                                  if (clientData == null || !clientData.containsKey('profileImageUrl')) {
+                                    return const Icon(Icons.error);
+                                  }
+                                  final clientImageUrl = clientData['profileImageUrl'] as String?;
+                                  return FutureBuilder<ImageProvider?>(
+                                    future: decodeImage(clientImageUrl ?? ''),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      return CircleAvatar(
+                                        radius: 30,
+                                        backgroundImage: snapshot.data!,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                              onTap: () {
+                                _navigateToChatScreen(context, publicationId, clientId);
+                              },
+                            );
+                          },
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              ],
+            );
+          } else {
+            // If current user is not the seller, display only the seller's name
+            return ListTile(
+              contentPadding: const EdgeInsets.all(8.0),
+              title: Text(
+                '$publicationTitle - $recipientName',
+                style: const TextStyle(fontSize: 18.0),
+              ),
+              leading: FutureBuilder<ImageProvider?>(
+                future: decodeImage(recipientImageUrl ?? ''),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
+                    return const CircularProgressIndicator();
+                  }
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundImage: snapshot.data!,
+                  );
+                },
+              ),
+              onTap: () async {
+                try {
+                  final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+                  if (currentUserUid != null) {
+                    final sellerId = publicationData['userId'];
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                          publicationId: publicationId,
+                          recipientId: sellerId,
+                          recipientName: recipientName,
+                        ),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('You are not signed in'),
+                    ));
+                  }
+                } catch (e) {
+                  print('Error: $e');
+                }
+              },
+            );
+          }
+        },
+      );
+    },
+  );
+}
+
+
+
+
   Future<String> _getUserName(String userId) async {
     try {
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
@@ -302,95 +407,5 @@ class _MessageScreenState extends State<MessageScreen> {
     List<int> imageBytes = base64Decode(imageUrl.split(',').last);
     return MemoryImage(Uint8List.fromList(imageBytes));
   }
-
-  void _showClientSelectionDialog(BuildContext context, String publicationId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Select Client'),
-          content: SingleChildScrollView(
-            child: FutureBuilder<List<String>>(
-              future: _getDistinctClients(publicationId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                final clientIds = snapshot.data ?? [];
-                return ListBody(
-                  children: clientIds.map((clientId) {
-                    return ListTile(
-                      title: FutureBuilder<String>(
-                        future: _getUserName(clientId),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Text('Loading...');
-                          }
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          final clientName = snapshot.data ?? 'Unknown';
-                          return Text(clientName);
-                        },
-                      ),
-                      onTap: () {
-                        _navigateToChatScreen(context, publicationId, clientId);
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<List<String>> _getDistinctClients(String publicationId) async {
-    try {
-      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-      final messagesSnapshot = await FirebaseFirestore.instance
-          .collection('messages')
-          .where('publicationId', isEqualTo: publicationId)
-          .get();
-
-      final Set<String> distinctClientIds = {};
-
-      for (var doc in messagesSnapshot.docs) {
-        final senderId = doc['senderId'] as String;
-        final receiverId = doc['receiverId'] as String;
-        if (senderId == currentUserUid) {
-          distinctClientIds.add(receiverId);
-        } else if (receiverId == currentUserUid) {
-          distinctClientIds.add(senderId);
-        }
-      }
-
-      return distinctClientIds.toList();
-    } catch (e) {
-      print('Error fetching distinct clients: $e');
-      return [];
-    }
-  }
-
-  void _navigateToChatScreen(BuildContext context, String publicationId, String recipientId) {
-    _getUserName(recipientId).then((recipientName) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatScreen(
-            publicationId: publicationId,
-            recipientId: recipientId,
-            recipientName: recipientName,
-          ),
-        ),
-      );
-    }).catchError((error) {
-      print('Error: $error');
-    });
-  }
 }
+
