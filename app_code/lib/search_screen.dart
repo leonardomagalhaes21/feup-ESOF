@@ -7,7 +7,7 @@ import 'other_profiles_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -15,8 +15,8 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<DocumentSnapshot> _allUsers = [];
-  List<DocumentSnapshot> _filteredUsers = [];
+  List<QueryDocumentSnapshot> _allUsers = [];
+  List<QueryDocumentSnapshot> _filteredUsers = [];
 
   @override
   void initState() {
@@ -93,14 +93,15 @@ class _SearchScreenState extends State<SearchScreen> {
             child: ListView.builder(
               itemCount: _filteredUsers.length,
               itemBuilder: (context, index) {
+                Map<String, dynamic> userData = _filteredUsers[index].data() as Map<String, dynamic>;
                 return ListTile(
-                  leading: _filteredUsers[index]['profileImageUrl'] != null
+                  leading: userData.containsKey('profileImageUrl')
                       ? CircleAvatar(
                           backgroundImage: NetworkImage(
-                              _filteredUsers[index]['profileImageUrl']),
+                              userData['profileImageUrl']),
                         )
                       : const CircleAvatar(),
-                  title: Text(_filteredUsers[index]['name']),
+                  title: Text(userData['name']),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -174,7 +175,7 @@ class _SearchScreenState extends State<SearchScreen> {
         _filteredUsers = _allUsers;
       } else {
         _filteredUsers = _allUsers
-            .where((user) => user['name']
+            .where((user) => (user.data() as Map<String, dynamic>)['name']
                 .toString()
                 .toLowerCase()
                 .startsWith(query.toLowerCase()))
