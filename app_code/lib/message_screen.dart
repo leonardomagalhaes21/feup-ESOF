@@ -58,7 +58,6 @@ class _MessageScreenState extends State<MessageScreen> {
             .where('receiverId', isEqualTo: currentUserUid)
             .get();
 
-        // Use a Set to store unique publication IDs
         final Set<String> distinctPublicationIds = {};
 
         for (var doc in senderMessagesSnapshot.docs) {
@@ -257,16 +256,11 @@ Widget _buildChatTab(String publicationId) {
           final recipientImageUrl = userData['profileImageUrl'] as String?;
           final publicationTitle = publicationData['title'] as String;
           final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-
-          // Check if the current user is the seller of the publication
           final bool isCurrentUserSeller = currentUserUid == userId;
-
-          // If current user is the seller, display additional rows with client names
           if (isCurrentUserSeller) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Display additional rows with client names
                 FutureBuilder<List<String>>(
                   future: _getClientIds(publicationId),
                   builder: (context, snapshot) {
