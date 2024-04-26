@@ -5,6 +5,8 @@ import 'message_screen.dart';
 import 'profile_screen.dart';
 import 'other_profiles_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -90,31 +92,51 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: _filteredUsers.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> userData = _filteredUsers[index].data() as Map<String, dynamic>;
-                return ListTile(
-                  leading: userData.containsKey('profileImageUrl')
-                      ? CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              userData['profileImageUrl']),
-                        )
-                      : const CircleAvatar(),
-                  title: Text(userData['name']),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OtherProfiles(
-                          userId: _filteredUsers[index].id,
+            child: _filteredUsers.isEmpty
+                ? Center(
+                    child: Text(
+                      'No users found for your search.',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _filteredUsers.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> userData = _filteredUsers[index].data() as Map<String, dynamic>;
+                      return ListTile(
+                        leading: FutureBuilder<ImageProvider?>(
+                          future: decodeImage(userData['profileImageUrl']),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircleAvatar(
+                                child: Icon(Icons.person),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              print('Error decoding image: ${snapshot.error}');
+                              return const CircleAvatar(
+                                child: Icon(Icons.person),
+                              );
+                            }
+                            return CircleAvatar(
+                              backgroundImage: snapshot.data,
+                            );
+                          },
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                        title: Text(userData['name']),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OtherProfiles(
+                                userId: _filteredUsers[index].id,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -183,4 +205,18 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     });
   }
+
+  Future<ImageProvider?> decodeImage(String? imageUrl) async {
+  if (imageUrl == null) {
+    return const AssetImage('assets/placeholder_image.png');
+  }
+  try {
+    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+    return MemoryImage(Uint8List.fromList(imageBytes));
+  } catch (error) {
+    print('Error decoding image: $error');
+    return const AssetImage('assets/placeholder_image.png');
+  }
+}
+
 }
