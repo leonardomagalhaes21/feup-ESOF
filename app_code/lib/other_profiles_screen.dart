@@ -123,11 +123,9 @@ class _OtherProfilesState extends State<OtherProfiles> {
             .get();
 
         if (userRatingQuery.docs.isNotEmpty) {
-          // Se o usuário já avaliou o perfil, atualize a avaliação existente
           final userRatingDoc = userRatingQuery.docs.first;
           await userRatingDoc.reference.update({'rating': rating});
         } else {
-          // Se o usuário ainda não avaliou o perfil, adicione uma nova avaliação
           await FirebaseFirestore.instance.collection('ratings').add({
             'rating': rating,
             'ratedUserId': widget.userId,
@@ -136,14 +134,11 @@ class _OtherProfilesState extends State<OtherProfiles> {
           });
         }
 
-        // Exiba uma mensagem de sucesso ou faça qualquer outra ação necessária após enviar a avaliação
         print('Rating submitted successfully: $rating');
 
-        // Atualize os dados novamente após o envio da avaliação
         await _getData();
       }
     } catch (e) {
-      // Lidere com erros de forma adequada, como exibir uma mensagem de erro ao usuário
       print('Error submitting rating: $e');
     }
   }
@@ -213,10 +208,19 @@ class _OtherProfilesState extends State<OtherProfiles> {
                           Center(
                             child: Column(
                               children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage:
-                                      NetworkImage(userData['profileImageUrl']),
+                                FutureBuilder<ImageProvider?>(
+                                  future: decodeImage(userData['profileImageUrl']),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.waiting ||
+                                        snapshot.data == null) {
+                                      return const CircularProgressIndicator();
+                                    }
+                                    return CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: snapshot.data!,
+                                    );
+                                  },
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
@@ -419,6 +423,16 @@ class _OtherProfilesState extends State<OtherProfiles> {
     } catch (e) {
       print('Error decoding image: $e');
       return const Icon(Icons.error);
+    }
+  }
+
+  Future<ImageProvider?> decodeImage(String imageUrl) async {
+    try {
+      List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+      return MemoryImage(Uint8List.fromList(imageBytes));
+    } catch (error) {
+      print('Error decoding image: $error');
+      return null;
     }
   }
 }
