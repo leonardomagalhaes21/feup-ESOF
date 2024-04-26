@@ -254,7 +254,7 @@ Widget _buildChatTab(String publicationId) {
             return const Text('User not found');
           }
           final recipientName = userData['name'] as String;
-          final recipientImageUrl = userData['profileImageUrl'] as String?;
+          final publicationImageUrl = publicationData['publicationImageUrl'] as String?;
           final publicationTitle = publicationData['title'] as String;
           final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
 
@@ -308,9 +308,8 @@ Widget _buildChatTab(String publicationId) {
                                   if (clientData == null || !clientData.containsKey('profileImageUrl')) {
                                     return const Icon(Icons.error);
                                   }
-                                  final clientImageUrl = clientData['profileImageUrl'] as String?;
                                   return FutureBuilder<ImageProvider?>(
-                                    future: decodeImage(clientImageUrl ?? ''),
+                                    future: decodeImage(publicationImageUrl ?? ''),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
                                         return const CircularProgressIndicator();
@@ -344,7 +343,7 @@ Widget _buildChatTab(String publicationId) {
                 style: const TextStyle(fontSize: 18.0),
               ),
               leading: FutureBuilder<ImageProvider?>(
-                future: decodeImage(recipientImageUrl ?? ''),
+                future: decodeImage(publicationImageUrl ?? ''),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
                     return const CircularProgressIndicator();
