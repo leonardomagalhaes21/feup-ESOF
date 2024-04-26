@@ -26,6 +26,7 @@ class _ProfileScreenState extends State with SingleTickerProviderStateMixin {
   final ImagePicker _imagePicker = ImagePicker();
   User? _currentUser;
   late Future<QuerySnapshot<Map<String, dynamic>>> _ratings;
+  double _rating = 0; 
   
 
   final GlobalKey _avatarKey = GlobalKey();
@@ -46,7 +47,17 @@ _tabController.dispose();
 super.dispose();
 }
 
-
+double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapshot) {
+    if (ratingsSnapshot.size == 0) {
+      return 0.0;
+    }
+    
+    double totalRating = 0;
+    for (var ratingDoc in ratingsSnapshot.docs) {
+      totalRating += ratingDoc.data()['rating'];
+    }
+    return totalRating / ratingsSnapshot.size;
+  }
 
   Future<void> _getCurrentUser() async {
   _currentUser = FirebaseAuth.instance.currentUser;
@@ -55,6 +66,16 @@ super.dispose();
       _profileImageUrl = '';
     });
     await loadUserProfile(); 
+
+    try {
+      final ratingsSnapshot = await _ratings;
+      final newRating = _calculateAverageRating(ratingsSnapshot);
+      setState(() {
+        _rating = newRating;
+      });
+    } catch (e) {
+      print('Error getting data: $e');
+    }
   }
 }
 
@@ -314,7 +335,7 @@ super.dispose();
                 const SizedBox(height: 10),
     Center(
       child: Text(
-        'Average Rating: ', // Add your average rating value here
+        'Average Rating: $_rating', // Add your average rating value here
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
