@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
@@ -17,22 +18,35 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   late TextEditingController _nameController;
   late TextEditingController _biographyController;
   String _profileImageUrl = '';
   final ImagePicker _imagePicker = ImagePicker();
   User? _currentUser;
+  late Future<QuerySnapshot<Map<String, dynamic>>> _ratings;
+  
 
   final GlobalKey _avatarKey = GlobalKey();
 
   @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController();
-    _biographyController = TextEditingController();
-    _getCurrentUser();
-  }
+void initState() {
+super.initState();
+_nameController = TextEditingController();
+_biographyController = TextEditingController();
+_getCurrentUser();
+_tabController = TabController(length: 2, vsync: this);
+//_ratings = _getRatings();
+}
+
+@override
+void dispose() {
+_tabController.dispose();
+super.dispose();
+}
+
+
 
   Future<void> _getCurrentUser() async {
   _currentUser = FirebaseAuth.instance.currentUser;
@@ -74,16 +88,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         List<int> imageBytes = [];
         String? imageUrl = data['publicationImageUrl'];
+        var timestamp = DateFormat('yyyy-MM-dd HH:mm')
+              .format(data['timestamp'].toDate());
+          var publicationImageUrl = data['publicationImageUrl'] ?? '';
+          var description = data['description'] ?? '';
+          var title = data['title'] ?? '';
+          var timestamp2 = DateFormat('yyyy-MM-dd HH:mm')
+              .format(data['timestamp'].toDate());
+          var publicationImageUrl2 = data['publicationImageUrl'] ?? '';
+          var description2 = data['description'] ?? '';
+          var title2 = data['title'] ?? '';
+          
         if (imageUrl != null && imageUrl.isNotEmpty) {
           imageBytes = base64Decode(imageUrl.split(',').last);
         }
 
         Widget publicationWidget = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                FutureBuilder<ImageProvider?>(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  FutureBuilder<ImageProvider?>(
                     future: decodeImage(_profileImageUrl),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState ==
@@ -97,29 +130,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(_nameController.text),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Image.memory(
-              Uint8List.fromList(imageBytes),
-              width: double.infinity,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '${_nameController.text}: ${data['description'] ?? ''}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 50),
-          ],
-        );
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(_nameController.text),
+                      
+                      Text(
+                        timestamp,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              FutureBuilder<ImageProvider?>(
+                future: decodeImage(publicationImageUrl),
+                builder:
+                    (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
+                  if (imageSnapshot.connectionState ==
+                          ConnectionState.waiting ||
+                      imageSnapshot.data == null) {
+                    return const CircularProgressIndicator();
+                  }
+                  double screenWidth = MediaQuery.of(context).size.width;
+                  return Image(
+                    image: imageSnapshot.data!,
+                    width: screenWidth,
+                    fit: BoxFit.contain,
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              Text(description),
+              
+            ],
+          );
         publicationWidgets.add(publicationWidget);
       }
       return publicationWidgets;
@@ -222,79 +270,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         centerTitle: true,
         elevation: 4,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    key: _avatarKey,
-                    radius: 50,
-                    backgroundImage: _profileImageUrl.isNotEmpty
-                        ? NetworkImage(_profileImageUrl)
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: uploadImage,
-                      child: const CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.camera_alt, color: Colors.black),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _biographyController,
-              decoration: const InputDecoration(labelText: 'Biography'),
-              maxLines: null,
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: saveProfile,
-                child: const Text('Save'),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: _signOut,
-                child: const Text('Logout'),
-              ),
-            ),
-            FutureBuilder(
-              future: loadUserPublications(),
-              builder: (context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: snapshot.data ?? [],
-                  );
-                }
-              },
-            ),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: 'Profile'),
+            Tab(text: 'Sales'),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        key: _avatarKey,
+                        radius: 50,
+                        backgroundImage: _profileImageUrl.isNotEmpty
+                            ? NetworkImage(_profileImageUrl)
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: uploadImage,
+                          child: const CircleAvatar(
+                            radius: 18,
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.camera_alt, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+    Center(
+      child: Text(
+        'Average Rating: ', // Add your average rating value here
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _biographyController,
+                  decoration: const InputDecoration(labelText: 'Biography'),
+                  maxLines: null,
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: saveProfile,
+                    child: const Text('Save'),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _signOut,
+                    child: const Text('Logout'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          FutureBuilder(
+            future: loadUserPublications(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return ListView(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: snapshot.data ?? [],
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
