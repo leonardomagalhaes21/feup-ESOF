@@ -8,7 +8,6 @@ import 'profile_screen.dart';
 import 'message_screen.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-
 class ChatScreen extends StatefulWidget {
   final String recipientId;
   final String recipientName;
@@ -55,7 +54,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-
   Stream<List<ChatMessage>> _getMessagesStream(String senderId, String recipientId, String? publicationId) {
     return FirebaseFirestore.instance
         .collection('messages')
@@ -81,12 +79,6 @@ class _ChatScreenState extends State<ChatScreen> {
       return messages;
     });
   }
-
-
-
-
-
-
 
   Future<void> _loadUserNames() async {
     try {
@@ -300,5 +292,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
 }

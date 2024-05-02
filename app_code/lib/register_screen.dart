@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -16,7 +15,6 @@ class RegisterScreen extends StatelessWidget {
   Future<void> _register(BuildContext context) async {
     try {
       if (_passwordController.text != _confirmPasswordController.text) {
-        // Senhas não coincidem, exiba um aviso ou mensagem de erro
         print("As senhas não coincidem.");
         return;
       }
@@ -26,14 +24,6 @@ class RegisterScreen extends StatelessWidget {
         email: _emailController.text,
         password: _passwordController.text,
       );
-
-      // Após o registro bem-sucedido, salve o nome do usuário no Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid) // Use o ID de usuário fornecido pelo FirebaseAuth
-          .set({
-        'name': _nameController.text.trim(),
-      });
 
       Navigator.pushReplacement(
         context,
@@ -48,7 +38,18 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
+        title: Text(
+          "Register",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontFamily: GoogleFonts.oswald().fontFamily,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -57,26 +58,58 @@ class RegisterScreen extends StatelessWidget {
           children: [
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
               obscureText: true,
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _confirmPasswordController,
-              decoration: const InputDecoration(labelText: 'Confirm Password'),
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _register(context),
-              child: const Text('Register'),
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () => _register(context),
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(color: Colors.white),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text('Register'),
+              ),
             ),
           ],
         ),
