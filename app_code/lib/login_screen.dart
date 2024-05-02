@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'register_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -29,7 +30,18 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
+        title: Text(
+          "Login",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontFamily: GoogleFonts.oswald().fontFamily,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -43,10 +55,9 @@ class LoginScreen extends StatelessWidget {
                   Text(
                     'FEUP-reUSE',
                     style: TextStyle(
-                      fontFamily: 'Poppins',
                       fontSize: 32.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black, // Título em preto
+                      color: Colors.black, 
                     ),
                   ),
                   SizedBox(height: 8.0),
@@ -54,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                     'O FEUP-reUSE ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Colors.black, // Descrição em preto
+                      color: Colors.black, 
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -64,28 +75,61 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 20),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
               obscureText: true,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _login(context),
-              child: const Text('Login'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen()),
-                );
-              },
-              child: const Text('Register'),
-            ),
-            const SizedBox(height: 32.0), // Aumentando o espaço abaixo dos botões
+
+            const SizedBox(height: 10),
+              SizedBox(
+                width: 200, 
+                child: ElevatedButton(
+                  onPressed: () => _login(context),
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(color: Colors.white), 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), 
+                    ),
+                  ),
+                  child: Text('Login'),
+                ),
+              ),
+              const SizedBox(height: 10), 
+              SizedBox(
+                width: 200, 
+                child: ElevatedButton(
+                  onPressed: () { 
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(
+                      color: Colors.white, 
+                    ),
+                    shape: RoundedRectangleBorder( 
+                      borderRadius: BorderRadius.circular(8), 
+                    ),
+                  ),
+                  child: Text('Register'),
+                ),
+              ),
+              const SizedBox(height: 10), 
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -93,35 +137,35 @@ class LoginScreen extends StatelessWidget {
                   'Reutiliza',
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.black, // Rs em preto
+                    color: Colors.black, 
                   ),
                 ),
                 Text(
                   '.',
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.black, // Rs em preto
+                    color: Colors.black, 
                   ),
                 ),
                 Text(
                   ' Reduz',
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.black, // Rs em preto
+                    color: Colors.black, 
                   ),
                 ),
                 Text(
                   '.',
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.black, // Rs em preto
+                    color: Colors.black, 
                   ),
                 ),
                 Text(
                   ' Recicla.',
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.black, // Rs em preto
+                    color: Colors.black, 
                   ),
                 ),
               ],
