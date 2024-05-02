@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
 import 'search_screen.dart';
@@ -8,6 +9,7 @@ import 'publication_list.dart';
 import 'message_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,68 +17,58 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  User? user = FirebaseAuth.instance.currentUser;
-
-  Widget initialScreen;
-  if (user != null) {
-    initialScreen = const MainScreen();
-  } else {
-    initialScreen = LoginScreen();
-  }
-
-  runApp(MyApp(initialScreen: initialScreen));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Widget initialScreen;
-
-  const MyApp({super.key, required this.initialScreen});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FEUP-reUSE',
-      home: initialScreen,
+    return ChangeNotifierProvider(
+      create: (context) => ScreenProvider(),
+      child: MaterialApp(
+        title: 'FEUP-reUSE',
+        home: Consumer<ScreenProvider>(
+          builder: (context, screenProvider, _) {
+            return screenProvider.currentScreen;
+          },
+        ),
+      ),
     );
   }
 }
 
+class ScreenProvider with ChangeNotifier {
+  Widget _currentScreen = LoginScreen();
+
+  Widget get currentScreen => _currentScreen;
+
+  void setScreen(Widget screen) {
+    _currentScreen = screen;
+    notifyListeners();
+  }
+}
+
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenProvider = Provider.of<ScreenProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              child: const Padding(
-                padding: EdgeInsets.only(
-                  bottom: 4.0,
-                ),
-                child: Text(
-                  'FEUP-reUSE',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 39.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 4,
-              color: Colors.black,
-            ),
-          ],
+        title: Text(
+          "FEUP-reUSE",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontFamily: GoogleFonts.oswald().fontFamily,
+          ),
         ),
-        centerTitle: true,
-        elevation: 4,
       ),
       body: const PublicationList(),
       bottomNavigationBar: BottomAppBar(
@@ -85,12 +77,17 @@ class MainScreen extends StatelessWidget {
           children: [
             IconButton(
               icon: const Icon(Icons.home),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const SearchScreen()),
                 );
@@ -101,15 +98,14 @@ class MainScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddPublicationScreen()),
+                  MaterialPageRoute(builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
             IconButton(
               icon: const Icon(Icons.message),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const MessageScreen()),
                 );
@@ -129,6 +125,5 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
+
 }
-
-

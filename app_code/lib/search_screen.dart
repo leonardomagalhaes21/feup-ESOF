@@ -7,6 +7,7 @@ import 'other_profiles_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:google_fonts/google_fonts.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -45,50 +46,48 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              child: const Padding(
-                padding: EdgeInsets.only(
-                  bottom: 4.0,
-                ),
-                child: Text(
-                  'FEUP-reUSE',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 39.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 4,
-              color: Colors.black,
-            ),
-          ],
+        title: Text(
+          "FEUP-reUSE",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontFamily: GoogleFonts.oswald().fontFamily,
+          ),
         ),
-        centerTitle: true,
-        elevation: 4,
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by name',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by name',
+                    border: InputBorder.none,
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                  onChanged: (value) {
+                    _filterUsers(value.trim());
+                  },
                 ),
               ),
-              onChanged: (value) {
-                _filterUsers(value.trim());
-              },
             ),
           ),
           Expanded(
@@ -102,12 +101,16 @@ class _SearchScreenState extends State<SearchScreen> {
                 : ListView.builder(
                     itemCount: _filteredUsers.length,
                     itemBuilder: (context, index) {
-                      Map<String, dynamic> userData = _filteredUsers[index].data() as Map<String, dynamic>;
+                      Map<String, dynamic> userData =
+                          _filteredUsers[index].data()
+                              as Map<String, dynamic>;
                       return ListTile(
                         leading: FutureBuilder<ImageProvider?>(
                           future: decodeImage(userData['profileImageUrl']),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.waiting ||
+                                snapshot.data == null) {
                               return const CircleAvatar(
                                 child: Icon(Icons.person),
                               );
@@ -207,16 +210,15 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<ImageProvider?> decodeImage(String? imageUrl) async {
-  if (imageUrl == null) {
-    return const AssetImage('assets/placeholder_image.png');
+    if (imageUrl == null) {
+      return const AssetImage('assets/placeholder_image.png');
+    }
+    try {
+      List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+      return MemoryImage(Uint8List.fromList(imageBytes));
+    } catch (error) {
+      print('Error decoding image: $error');
+      return const AssetImage('assets/placeholder_image.png');
+    }
   }
-  try {
-    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
-    return MemoryImage(Uint8List.fromList(imageBytes));
-  } catch (error) {
-    print('Error decoding image: $error');
-    return const AssetImage('assets/placeholder_image.png');
-  }
-}
-
 }
