@@ -49,7 +49,7 @@ class PublicationItem extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -80,10 +80,16 @@ class PublicationItem extends StatelessWidget {
                             (context, AsyncSnapshot<double> ratingSnapshot) {
                           if (ratingSnapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Text('$userName Rating: ...');
+                            return Text(
+                              '$userName                          Rating: ...',
+                              overflow: TextOverflow.ellipsis,
+                            );
                           } else {
                             double sellerRating = ratingSnapshot.data!;
-                            return Text('$userName Rating: $sellerRating');
+                            return Text(
+                              '$userName                          Rating: $sellerRating',
+                              overflow: TextOverflow.ellipsis,
+                            );
                           }
                         },
                       ),
@@ -105,36 +111,52 @@ class PublicationItem extends StatelessWidget {
                       imageSnapshot.data == null) {
                     return const CircularProgressIndicator();
                   }
-                  double screenWidth = MediaQuery.of(context).size.width;
-                  return Image(
-                    image: imageSnapshot.data!,
-                    width: screenWidth,
-                    fit: BoxFit.contain,
+                  return SizedBox(
+                    width: 500,
+                    height: 500,
+                    child: Image(
+                      image: imageSnapshot.data!,
+                      fit: BoxFit.cover,
+                    ),
                   );
                 },
               ),
               const SizedBox(height: 8),
+              Text(
+                'Description: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               Text(description),
               const SizedBox(height: 8),
-              if (publication['userId'] != FirebaseAuth.instance.currentUser?.uid)
-              ElevatedButton.icon(
-                onPressed: () {
-                  String sellerId = publication['userId'];
-                  String sellerName = user['name'] ?? 'Unknown';
-                  String publicationId = publication.id;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatScreen(
-                        recipientId: sellerId,
-                        recipientName: sellerName,
-                        publicationId: publicationId,
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      String sellerId = publication['userId'];
+                      String sellerName = user['name'] ?? 'Unknown';
+                      String publicationId = publication.id;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            recipientId: sellerId,
+                            recipientName: sellerName,
+                            publicationId: publicationId,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.message),
+                    label: const Text('Chat with Seller'),
+                    style: ElevatedButton.styleFrom(
+                      textStyle: const TextStyle(color: Colors.white),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.message),
-                label: const Text('Chat with Seller'),
+                  ),
+                  const SizedBox(width: 8),
+                ],
               ),
             ],
           );

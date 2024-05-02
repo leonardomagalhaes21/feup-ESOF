@@ -6,10 +6,11 @@ import 'package:intl/intl.dart';
 import 'main.dart';
 import 'search_screen.dart';
 import 'add_publication_screen.dart';
-import 'dart:typed_data';
 import 'message_screen.dart';
 import 'login_screen.dart';
 import 'dart:convert';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:typed_data';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,7 +19,7 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State with SingleTickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late TextEditingController _nameController;
   late TextEditingController _biographyController;
@@ -32,22 +33,22 @@ class _ProfileScreenState extends State with SingleTickerProviderStateMixin {
   final GlobalKey _avatarKey = GlobalKey();
 
   @override
-void initState() {
-super.initState();
-_nameController = TextEditingController();
-_biographyController = TextEditingController();
-_getCurrentUser();
-_tabController = TabController(length: 2, vsync: this);
-//_ratings = _getRatings();
-}
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _biographyController = TextEditingController();
+    _getCurrentUser();
+    _tabController = TabController(length: 2, vsync: this);
+    // _ratings = _getRatings();
+  }
 
-@override
-void dispose() {
-_tabController.dispose();
-super.dispose();
-}
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
-double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapshot) {
+  double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapshot) {
     if (ratingsSnapshot.size == 0) {
       return 0.0;
     }
@@ -60,24 +61,24 @@ double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapsh
   }
 
   Future<void> _getCurrentUser() async {
-  _currentUser = FirebaseAuth.instance.currentUser;
-  if (_currentUser != null) {
-    setState(() {
-      _profileImageUrl = '';
-    });
-    await loadUserProfile(); 
-
-    try {
-      final ratingsSnapshot = await _ratings;
-      final newRating = _calculateAverageRating(ratingsSnapshot);
+    _currentUser = FirebaseAuth.instance.currentUser;
+    if (_currentUser != null) {
       setState(() {
-        _rating = newRating;
+        _profileImageUrl = '';
       });
-    } catch (e) {
-      print('Error getting data: $e');
+      await loadUserProfile(); 
+
+      try {
+        final ratingsSnapshot = await _ratings;
+        final newRating = _calculateAverageRating(ratingsSnapshot);
+        setState(() {
+          _rating = newRating;
+        });
+      } catch (e) {
+        print('Error getting data: $e');
+      }
     }
   }
-}
 
 
   Future<void> loadUserProfile() async {
@@ -111,84 +112,84 @@ double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapsh
         String? imageUrl = data['publicationImageUrl'];
         var timestamp = DateFormat('yyyy-MM-dd HH:mm')
               .format(data['timestamp'].toDate());
-          var publicationImageUrl = data['publicationImageUrl'] ?? '';
-          var description = data['description'] ?? '';
-          var title = data['title'] ?? '';
-          var timestamp2 = DateFormat('yyyy-MM-dd HH:mm')
-              .format(data['timestamp'].toDate());
-          var publicationImageUrl2 = data['publicationImageUrl'] ?? '';
-          var description2 = data['description'] ?? '';
-          var title2 = data['title'] ?? '';
-          
+        var publicationImageUrl = data['publicationImageUrl'] ?? '';
+        var description = data['description'] ?? '';
+        var title = data['title'] ?? '';
+        var timestamp2 = DateFormat('yyyy-MM-dd HH:mm')
+            .format(data['timestamp'].toDate());
+        var publicationImageUrl2 = data['publicationImageUrl'] ?? '';
+        var description2 = data['description'] ?? '';
+        var title2 = data['title'] ?? '';
+        
         if (imageUrl != null && imageUrl.isNotEmpty) {
           imageBytes = base64Decode(imageUrl.split(',').last);
         }
 
         Widget publicationWidget = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                FutureBuilder<ImageProvider?>(
+                  future: decodeImage(_profileImageUrl),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                            ConnectionState.waiting ||
+                        snapshot.data == null) {
+                      return const CircularProgressIndicator();
+                    }
+                    return CircleAvatar(
+                      radius: 20,
+                      backgroundImage: snapshot.data!,
+                    );
+                  },
                 ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  FutureBuilder<ImageProvider?>(
-                    future: decodeImage(_profileImageUrl),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState ==
-                              ConnectionState.waiting ||
-                          snapshot.data == null) {
-                        return const CircularProgressIndicator();
-                      }
-                      return CircleAvatar(
-                        radius: 20,
-                        backgroundImage: snapshot.data!,
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      
-                      Text(_nameController.text),
-                      
-                      Text(
-                        timestamp,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              FutureBuilder<ImageProvider?>(
-                future: decodeImage(publicationImageUrl),
-                builder:
-                    (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
-                  if (imageSnapshot.connectionState ==
-                          ConnectionState.waiting ||
-                      imageSnapshot.data == null) {
-                    return const CircularProgressIndicator();
-                  }
-                  double screenWidth = MediaQuery.of(context).size.width;
-                  return Image(
-                    image: imageSnapshot.data!,
-                    width: screenWidth,
-                    fit: BoxFit.contain,
-                  );
-                },
-              ),
-              const SizedBox(height: 8),
-              Text(description),
-              
-            ],
-          );
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    
+                    Text(_nameController.text),
+                    
+                    Text(
+                      timestamp,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            FutureBuilder<ImageProvider?>(
+              future: decodeImage(publicationImageUrl),
+              builder:
+                  (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
+                if (imageSnapshot.connectionState ==
+                        ConnectionState.waiting ||
+                    imageSnapshot.data == null) {
+                  return const CircularProgressIndicator();
+                }
+                double screenWidth = MediaQuery.of(context).size.width;
+                return Image(
+                  image: imageSnapshot.data!,
+                  width: screenWidth,
+                  fit: BoxFit.contain,
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            Text(description),
+            
+          ],
+        );
         publicationWidgets.add(publicationWidget);
       }
       return publicationWidgets;
@@ -264,33 +265,16 @@ double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapsh
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              child: const Padding(
-                padding: EdgeInsets.only(
-                  bottom: 4.0,
-                ),
-                child: Text(
-                  'FEUP-reUSE',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 39.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 4,
-              color: Colors.black,
-            ),
-          ],
+        title: Text(
+          "FEUP-reUSE",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontFamily: GoogleFonts.oswald().fontFamily,
+          ),
         ),
-        centerTitle: true,
-        elevation: 4,
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -299,6 +283,7 @@ double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapsh
           ],
         ),
       ),
+      
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -333,38 +318,70 @@ double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapsh
                   ),
                 ),
                 const SizedBox(height: 10),
-    Center(
-      child: Text(
-        'Average Rating: $_rating', // Add your average rating value here
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ),
+                Center(
+                  child: Text(
+                    'Average Rating: $_rating', // Add your average rating value here
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _biographyController,
-                  decoration: const InputDecoration(labelText: 'Biography'),
+                  decoration: InputDecoration(
+                    labelText: 'Biography',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                  ),
                   maxLines: null,
                 ),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: saveProfile,
-                    child: const Text('Save'),
+                    child: Text('Save'),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: _signOut,
-                    child: const Text('Logout'),
+                    child: Text('Logout'),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -449,6 +466,6 @@ double _calculateAverageRating(QuerySnapshot<Map<String, dynamic>> ratingsSnapsh
 }
 
 Future<ImageProvider?> decodeImage(String imageUrl) async {
-    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
-    return MemoryImage(Uint8List.fromList(imageBytes));
-  }
+  List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+  return MemoryImage(Uint8List.fromList(imageBytes));
+}
