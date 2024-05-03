@@ -119,7 +119,7 @@ You can find below information and references related with the project managemen
 * Release management: 
 - [Iteration 0](#iteration-0)
 - [Iteration 1](#iteration-1)
-- [Iteration 2]()
+- [Iteration 2](#iteration-2)
 - [Iteration 3]()
 
 
@@ -179,7 +179,7 @@ You can find below information and references related with the project managemen
 >
 > ## Start
 > 
-As we review our sprint, it's clear that our team displayed admirable collaboration and met our objectives. However, there are areas where our processes require refinement. We need to prioritize "smoothing edges," emphasizing the importance of attention to detail. This means ensuring that even the smallest details are functioning effectively in our project. 
+> <p>As we review our sprint, it's clear that our team displayed admirable collaboration and met our objectives. However, there are areas where our processes require refinement. We need to prioritize "smoothing edges," emphasizing the importance of attention to detail. This means ensuring that even the smallest details are functioning effectively in our project. </p>
 >
 > ## Continue
 > <p>Continue upholding the exceptional level of collaboration within the team, ensuring both clear communication and alignment. Additionally, concentrate on efficiently delivering key features and meeting sprint goals.</p>
