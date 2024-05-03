@@ -2,10 +2,28 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "_fe_analyzer_shared",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-67.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "_flutterfire_internals",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.26",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "analyzer",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/analyzer-6.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "args",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/args-2.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "async",
@@ -18,6 +36,24 @@
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/boolean_selector-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "build",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/build-2.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "built_collection",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/built_collection-5.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "built_value",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/built_value-8.9.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "characters",
@@ -50,10 +86,28 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "code_builder",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/code_builder-4.10.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "collection",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/collection-1.18.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "convert",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/convert-3.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "coverage",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/coverage-1.7.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "cross_file",
@@ -62,16 +116,40 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "crypto",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/crypto-3.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.6",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
+      "name": "dart_style",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/dart_style-2.3.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "fake_async",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/fake_async-1.3.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "ffi",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/ffi-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "file",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/file-7.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "file_selector_linux",
@@ -134,6 +212,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "fixnum",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/fixnum-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///home/darksystem/snap/flutter/common/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -170,10 +254,34 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "frontend_server_client",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/frontend_server_client-3.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "glob",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/glob-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "google_fonts",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/google_fonts-4.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
       "name": "http",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/http-1.2.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "http_multi_server",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/http_multi_server-3.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "http_parser",
@@ -236,6 +344,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "io",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/io-1.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "js",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
@@ -266,6 +380,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "logging",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/logging-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "matcher",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/matcher-0.12.16+1",
       "packageUri": "lib/",
@@ -290,8 +410,74 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "mockito",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/mockito-5.4.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "nested",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/nested-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "node_preamble",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/node_preamble-2.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "package_config",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/package_config-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "path",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path-1.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "path_provider",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path_provider-2.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "path_provider_android",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path_provider_android-2.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "path_provider_foundation",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path_provider_foundation-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "path_provider_linux",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "path_provider_platform_interface",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path_provider_platform_interface-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "path_provider_windows",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/path_provider_windows-2.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "platform",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/platform-3.1.4",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -302,10 +488,70 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "pool",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/pool-1.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "provider",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/provider-6.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "pub_semver",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/pub_semver-2.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "shelf",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/shelf-1.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "shelf_packages_handler",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/shelf_packages_handler-3.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "shelf_static",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/shelf_static-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "shelf_web_socket",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/shelf_web_socket-1.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///home/darksystem/snap/flutter/common/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "source_gen",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/source_gen-1.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "source_map_stack_trace",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/source_map_stack_trace-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "source_maps",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/source_maps-0.10.12",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
     },
     {
       "name": "source_span",
@@ -338,8 +584,20 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "test",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/test-1.24.9",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "test_api",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/test_api-0.6.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "test_core",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/test_core-0.5.9",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -368,10 +626,46 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "watcher",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/watcher-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "web",
       "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/web-0.5.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "web_socket_channel",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/web_socket_channel-2.4.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "webkit_inspection_protocol",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/webkit_inspection_protocol-1.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "win32",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/win32-5.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "xdg_directories",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/xdg_directories-1.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "yaml",
+      "rootUri": "file:///home/darksystem/.pub-cache/hosted/pub.dev/yaml-3.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "feup_re_use",
@@ -380,7 +674,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-04-26T10:29:11.656399Z",
+  "generated": "2024-05-03T11:20:41.497106Z",
   "generator": "pub",
   "generatorVersion": "3.3.2"
 }

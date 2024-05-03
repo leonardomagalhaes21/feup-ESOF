@@ -54,6 +54,7 @@ MERGED from [:cloud_firestore] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T
 MERGED from [:firebase_core] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/firebase_core/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-17:12
 MERGED from [:image_picker_android] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-21:12
 MERGED from [:flutter_plugin_android_lifecycle] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/flutter_plugin_android_lifecycle/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:path_provider_android] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/path_provider_android/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.firebase:firebase-auth:22.3.1] /home/darksystem/.gradle/caches/transforms-3/a6bd6391ef21328897caf6e03a97abbd/transformed/jetified-firebase-auth-22.3.1/AndroidManifest.xml:17:1-75:12
 MERGED from [com.google.firebase:firebase-firestore:24.10.3] /home/darksystem/.gradle/caches/transforms-3/640a95b4824fe429c2e602fb56dda0c8/transformed/jetified-firebase-firestore-24.10.3/AndroidManifest.xml:2:1-26:12
 MERGED from [com.google.firebase:firebase-common-ktx:20.4.2] /home/darksystem/.gradle/caches/transforms-3/3e0bc4977c88ea836df12b1c7ea3d9c2/transformed/jetified-firebase-common-ktx-20.4.2/AndroidManifest.xml:2:1-18:12
@@ -139,6 +140,8 @@ MERGED from [:image_picker_android] /home/darksystem/Desktop/LEIC/ES/project/2LE
 MERGED from [:image_picker_android] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:flutter_plugin_android_lifecycle] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/flutter_plugin_android_lifecycle/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:flutter_plugin_android_lifecycle] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/flutter_plugin_android_lifecycle/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:path_provider_android] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/path_provider_android/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:path_provider_android] /home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/path_provider_android/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [com.google.firebase:firebase-auth:22.3.1] /home/darksystem/.gradle/caches/transforms-3/a6bd6391ef21328897caf6e03a97abbd/transformed/jetified-firebase-auth-22.3.1/AndroidManifest.xml:21:5-23:64
 MERGED from [com.google.firebase:firebase-auth:22.3.1] /home/darksystem/.gradle/caches/transforms-3/a6bd6391ef21328897caf6e03a97abbd/transformed/jetified-firebase-auth-22.3.1/AndroidManifest.xml:21:5-23:64
 MERGED from [com.google.firebase:firebase-firestore:24.10.3] /home/darksystem/.gradle/caches/transforms-3/640a95b4824fe429c2e602fb56dda0c8/transformed/jetified-firebase-firestore-24.10.3/AndroidManifest.xml:6:5-44

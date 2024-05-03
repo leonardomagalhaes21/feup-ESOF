@@ -1,4 +1,4 @@
-#Fri Apr 26 11:30:25 WEST 2024
+#Fri May 03 12:08:00 WEST 2024
 base.0=/home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 base.1=/home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/app/intermediates/dex/debug/mergeDexDebug/classes2.dex
 base.2=/home/darksystem/Desktop/LEIC/ES/project/2LEIC02T1/app_code/build/app/intermediates/dex/debug/mergeDexDebug/classes3.dex
