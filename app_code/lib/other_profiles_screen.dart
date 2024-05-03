@@ -9,6 +9,7 @@ import 'main.dart';
 import 'profile_screen.dart';
 import 'add_publication_screen.dart';
 import 'message_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class OtherProfiles extends StatefulWidget {
   final String userId;
@@ -149,33 +150,16 @@ class _OtherProfilesState extends State<OtherProfiles> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              child: const Padding(
-                padding: EdgeInsets.only(
-                  bottom: 4.0,
-                ),
-                child: Text(
-                  'FEUP-reUSE',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 39.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 4,
-              color: Colors.black,
-            ),
-          ],
+        title: Text(
+          "FEUP-reUSE",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontFamily: GoogleFonts.oswald().fontFamily,
+          ),
         ),
-        centerTitle: true,
-        elevation: 4,
       ),
       body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
         future: _userProfile,
