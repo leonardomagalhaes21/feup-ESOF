@@ -1,0 +1,142 @@
+
+Scenario: Initiating Communication with Sellers/Traders
+
+Given the user is logged into FEUPreUSE
+And is viewing an item listing
+When the user selects the option to contact the seller/trader
+And sends a message expressing interest or inquiry
+Then the seller/trader should receive the message in their FEUPreUSE inbox
+And the user and seller/trader can continue communication through FEUPreUSE for meeting arrangements or further discussion
+
+
+
+Scenario: Creating Detailed Listings for Items
+
+Given the seller is logged into FEUPreUSE
+And navigates to the item listing section
+When the seller selects the option to create a new listing
+And uploads photos of the item
+And provides a written description including the condition and specifications
+And publishes the listing
+Then the seller's item listing should be visible on the platform
+And users should be able to view the photos, description, and specifications of the item
+And can contact the seller for further inquiries or to initiate a trade
+
+
+
+Scenario: Rating and Reviewing Trade Partners
+
+Given the seller is logged into FEUPreUSE
+And has completed a trade with a partner
+When the seller navigates to the trade history or partner's profile
+And selects the option to rate and review the trade partner
+And provides a rating and written review based on their trading experience
+And submits the rating and review
+Then the seller's rating and review should be visible on the partner's profile
+
+
+
+Scenario: Uploading Photos to Create Posts
+
+Given the user is logged into the app
+And is on the post creation screen
+When the user selects the option to upload a photo
+And chooses a photo from their cellphone gallery
+And adds a caption to the post
+And publishes the post
+Then the user should see their new post with the uploaded photo on the app feed
+And the post should be visible to other users
+
+
+
+Scenario: Searching for Users to Find Products
+
+Given the user is logged into the app
+And is on the search screen
+When the user enters the username or seller name in the search bar
+And submits the search query
+Then the user should see a list of users matching the search criteria
+And can select a user from the list to view their profile and products listed for trade
+
+
+
+Feature: User Authentication
+
+Scenario: Registering for a New Account
+Given the user is on the registration page of the FEUPreUSE app
+When the user provides valid registration information
+And submits the registration form
+Then the user's account should be created
+And the user should be automatically logged in
+And redirected to the home screen
+
+
+
+Scenario: Searching for Open Chats
+
+Given the user is logged into the app
+And is on the chat screen
+When the user enters keywords in the search bar related to the chats they are looking for
+And submits the search query
+Then the user should see a list of open chats matching the search criteria
+And can easily navigate to the desired chat conversation
+
+
+
+Scenario: Taking Photos and Creating Posts
+
+Given the user is logged into the app
+And is on the post creation screen
+When the user selects the option to take a photo
+And captures a photo using their cellphone camera
+And confirms the photo
+And adds a caption to the post
+And publishes the post
+Then the user should see their new post with the photo on the app feed
+And the post should be visible to other users
+
+
+
+Scenario: Viewing User Profiles and Posts
+
+Given the user is logged into the app
+And navigates to their own profile
+When the user views their profile details
+And navigates to another user's profile
+Then the user should be able to see the other user's profile details
+And view the posts and statistics of the other user
+And should be able to navigate back to their own profile
+
+
+
+Feature: Easy Navigation
+
+Scenario: Navigating to the Home Screen
+Given the user is logged into the app
+When the user opens the app
+Then the user should see the Home screen
+
+Scenario: Navigating to the Profile Screen
+Given the user is logged into the app
+When the user taps on the profile icon
+Then the user should be taken to the Profile screen
+
+Scenario: Navigating to the Chat Screen
+Given the user is logged into the app
+When the user taps on the Chat button
+And selects the Person chat they want to talk with
+Then the user should be taken to the Chat screen
+
+Scenario: Navigating to the Search Screen
+Given the user is logged into the app
+When the user taps on the search icon
+Then the user should be taken to the Search screen
+
+Scenario: Navigating to the Post Creation Screen
+Given the user is logged into the app
+When the user taps on the Create Post button
+Then the user should be taken to the Post Creation screen
+
+
+
+
