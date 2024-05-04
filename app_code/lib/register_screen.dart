@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'main.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,24 +15,62 @@ class RegisterScreen extends StatelessWidget {
 
   Future<void> _register(BuildContext context) async {
     try {
-      if (_passwordController.text != _confirmPasswordController.text) {
-        print("As senhas não coincidem.");
+      if (_nameController.text.isEmpty ||
+          _emailController.text.isEmpty ||
+          _passwordController.text.isEmpty ||
+          _confirmPasswordController.text.isEmpty) {
+        _showAlertDialog(context, "Preencha todos os campos.");
         return;
       }
 
+      if (_passwordController.text != _confirmPasswordController.text) {
+        _showAlertDialog(context, "As senhas não coincidem.");
+        return;
+      }
+
+      // Criar o usuário no Firebase Auth
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
+      // Adicionar informações adicionais do usuário ao Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).set({
+        'name': _nameController.text,
+        'biography': '',
+        'profileImageUrl': '', // Adicione a URL da imagem de perfil, se houver
+      });
+
+      // Navegar para a tela principal após o registro bem-sucedido
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } catch (e) {
       print("Falha no registro: $e");
+      _showAlertDialog(context, "Falha no registro: $e");
     }
+  }
+
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Erro"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
