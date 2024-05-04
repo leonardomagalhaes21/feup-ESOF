@@ -26,6 +26,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
   double _lastRating = 0; // Last rating given by the current user
   late Future<QuerySnapshot<Map<String, dynamic>>> _userPublications;
   late Future<QuerySnapshot<Map<String, dynamic>>> _ratings;
+  late bool _canRate; // Flag to indicate if the current user can rate the profile
 
   @override
   void initState() {
@@ -51,15 +52,24 @@ class _OtherProfilesState extends State<OtherProfiles> {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        final userRatingQuery = await FirebaseFirestore.instance
-            .collection('ratings')
-            .where('ratedUserId', isEqualTo: widget.userId)
-            .where('ratingUserId', isEqualTo: currentUser.uid)
-            .get();
-        if (userRatingQuery.docs.isNotEmpty) {
-          final userRating = userRatingQuery.docs.first.data()['rating'];
+        if (widget.userId != currentUser.uid) {
           setState(() {
-            _lastRating = userRating;
+            _canRate = true;
+          });
+          final userRatingQuery = await FirebaseFirestore.instance
+              .collection('ratings')
+              .where('ratedUserId', isEqualTo: widget.userId)
+              .where('ratingUserId', isEqualTo: currentUser.uid)
+              .get();
+          if (userRatingQuery.docs.isNotEmpty) {
+            final userRating = userRatingQuery.docs.first.data()['rating'];
+            setState(() {
+              _lastRating = userRating;
+            });
+          }
+        } else {
+          setState(() {
+            _canRate = false;
           });
         }
       }
@@ -214,53 +224,55 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Rate User'),
-                                          content: StatefulBuilder(
-                                            builder: (BuildContext context, StateSetter setState) {
-                                              return Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  RatingBar.builder(
-                                                    initialRating: _lastRating != 0 ? _lastRating : _rating,
-                                                    minRating: 0,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: true,
-                                                    itemCount: 5,
-                                                    itemSize: 30.0,
-                                                    itemBuilder: (context, _) => const Icon(
-                                                      Icons.star,
-                                                      color: Colors.amber,
+                                if (_canRate ?? false) ...[
+                                  const SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Rate User'),
+                                            content: StatefulBuilder(
+                                              builder: (BuildContext context, StateSetter setState) {
+                                                return Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    RatingBar.builder(
+                                                      initialRating: _lastRating != 0 ? _lastRating : _rating,
+                                                      minRating: 0,
+                                                      direction: Axis.horizontal,
+                                                      allowHalfRating: true,
+                                                      itemCount: 5,
+                                                      itemSize: 30.0,
+                                                      itemBuilder: (context, _) => const Icon(
+                                                        Icons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                      onRatingUpdate: (rating) {
+                                                        setState(() {
+                                                          _lastRating = rating;
+                                                        });
+                                                      },
                                                     ),
-                                                    onRatingUpdate: (rating) {
-                                                      setState(() {
-                                                        _lastRating = rating;
-                                                      });
-                                                    },
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      _submitRating(_lastRating);
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('Submit Rating'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: const Text('Rate'),
-                                ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        _submitRating(_lastRating);
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('Submit Rating'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text('Rate'),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
