@@ -23,7 +23,28 @@ class LoginScreen extends StatelessWidget {
       );
     } catch (e) {
       print("Login failed: $e");
+      _showAlertDialog(context, "Email ou senha incorretos.");
     }
+  }
+
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Erro"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -62,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    'O FEUP-reUSE ajuda-te a partilhar e encontrar recursos reutilizáveis para um mundo mais sustentável.',
+                    'FEUP-reUSE helps you share and find reusable resources for a more sustainable world.',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.black, 
@@ -134,7 +155,7 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Reutiliza',
+                  'Reuse',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.black, 
@@ -148,7 +169,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ' Reduz',
+                  ' Reduce',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.black, 
@@ -162,7 +183,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ' Recicla.',
+                  ' Recycle.',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.black, 
