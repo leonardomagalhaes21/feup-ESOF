@@ -23,7 +23,28 @@ class LoginScreen extends StatelessWidget {
       );
     } catch (e) {
       print("Login failed: $e");
+      _showAlertDialog(context, "Email ou senha incorretos.");
     }
+  }
+
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Erro"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
