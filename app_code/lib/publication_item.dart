@@ -130,6 +130,7 @@ class PublicationItem extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
+                  if (publication['userId'] != FirebaseAuth.instance.currentUser?.uid)
                   ElevatedButton.icon(
                     onPressed: () {
                       String sellerId = publication['userId'];

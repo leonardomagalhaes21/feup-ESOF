@@ -125,70 +125,72 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           imageBytes = base64Decode(imageUrl.split(',').last);
         }
 
-        Widget publicationWidget = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        Widget publicationWidget = Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                FutureBuilder<ImageProvider?>(
-                  future: decodeImage(_profileImageUrl),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                            ConnectionState.waiting ||
-                        snapshot.data == null) {
-                      return const CircularProgressIndicator();
-                    }
-                    return CircleAvatar(
-                      radius: 20,
-                      backgroundImage: snapshot.data!,
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Text(_nameController.text),
-                    
-                    Text(
-                      timestamp,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            FutureBuilder<ImageProvider?>(
-              future: decodeImage(publicationImageUrl),
-              builder:
-                  (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
-                if (imageSnapshot.connectionState ==
-                        ConnectionState.waiting ||
-                    imageSnapshot.data == null) {
-                  return const CircularProgressIndicator();
-                }
-                double screenWidth = MediaQuery.of(context).size.width;
-                return Image(
-                  image: imageSnapshot.data!,
-                  width: screenWidth,
-                  fit: BoxFit.contain,
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            Text(description),
-            
-          ],
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  FutureBuilder<ImageProvider?>(
+                    future: decodeImage(_profileImageUrl),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                              ConnectionState.waiting ||
+                          snapshot.data == null) {
+                        return const CircularProgressIndicator();
+                      }
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: snapshot.data!,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(_nameController.text),
+                      
+                      Text(
+                        timestamp,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              FutureBuilder<ImageProvider?>(
+                future: decodeImage(publicationImageUrl),
+                builder:
+                    (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
+                  if (imageSnapshot.connectionState ==
+                          ConnectionState.waiting ||
+                      imageSnapshot.data == null) {
+                    return const CircularProgressIndicator();
+                  }
+                  double screenWidth = MediaQuery.of(context).size.width;
+                  return Image(
+                    image: imageSnapshot.data!,
+                    width: screenWidth,
+                    fit: BoxFit.contain,
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              Text(description),
+            ],
+          ),
         );
         publicationWidgets.add(publicationWidget);
       }
