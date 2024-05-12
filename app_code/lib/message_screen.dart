@@ -27,7 +27,7 @@ class ChatMessage {
 }
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key});
+  const MessageScreen({Key? key});
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -210,16 +210,17 @@ class _MessageScreenState extends State<MessageScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SizedBox(
-            height: 50, // Adjust the height according to your design
-            width: 50, // Adjust the width according to your design
+            height: 50,
+            width: 50,
             
           );
         }
         if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          print('Error fetching publication data: ${snapshot.error}');
+          return Container();
         }
         final publicationData =
-            snapshot.data?.data() as Map<String, dynamic>?; // Explicitly cast to Map<String, dynamic> or null
+            snapshot.data?.data() as Map<String, dynamic>?;
         if (publicationData == null) {
           return const Text('Publication not found');
         }
@@ -234,10 +235,11 @@ class _MessageScreenState extends State<MessageScreen> {
               );
             }
             if (userSnapshot.hasError) {
-              return Text('Error: ${userSnapshot.error}');
+              print('Error fetching user data: ${userSnapshot.error}');
+              return Container();
             }
             final userData =
-                userSnapshot.data?.data() as Map<String, dynamic>?; // Explicitly cast to Map<String, dynamic> or null
+                userSnapshot.data?.data() as Map<String, dynamic>?;
             if (userData == null) {
               return const Text('User not found');
             }
@@ -254,9 +256,11 @@ class _MessageScreenState extends State<MessageScreen> {
                     future: _getClientIds(publicationId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
                       }
                       if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
+                        print('Error fetching client IDs: ${snapshot.error}');
+                        return Container();
                       }
                       final clientIds = snapshot.data ?? [];
                       return Column(
@@ -268,7 +272,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                 return const CircularProgressIndicator();
                               }
                               if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
+                                print('Error fetching client name: ${snapshot.error}');
+                                return Container();
                               }
                               final clientName = snapshot.data ?? 'Unknown';
                               return ListTile(
@@ -281,9 +286,10 @@ class _MessageScreenState extends State<MessageScreen> {
                                   future: FirebaseFirestore.instance.collection('users').doc(clientId).get(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                      
+                                      return const CircularProgressIndicator();
                                     }
                                     if (snapshot.hasError) {
+                                      print('Error fetching client data: ${snapshot.error}');
                                       return const Icon(Icons.error); 
                                     }
                                     final clientData = snapshot.data?.data() as Map<String, dynamic>?;
@@ -294,6 +300,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                       future: decodeImage(publicationImageUrl ?? ''),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
+                                          return const CircularProgressIndicator();
                                         }
                                         return CircleAvatar(
                                           radius: 30,
@@ -381,7 +388,12 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Future<ImageProvider?> decodeImage(String imageUrl) async {
-    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
-    return MemoryImage(Uint8List.fromList(imageBytes));
+    try {
+      List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+      return MemoryImage(Uint8List.fromList(imageBytes));
+    } catch (e) {
+      print('Error decoding image: $e');
+      return null;
+    }
   }
 }
