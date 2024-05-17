@@ -24,13 +24,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   late TextEditingController _nameController;
   late TextEditingController _biographyController;
   String _profileImageUrl = '';
+  String _newProfileImageUrl = '';
   final ImagePicker _imagePicker = ImagePicker();
   User? _currentUser;
   late Future<QuerySnapshot<Map<String, dynamic>>> _ratings;
-  double _rating = 0; 
-  
-
-  final GlobalKey _avatarKey = GlobalKey();
+  double _rating = 0;
 
   @override
   void initState() {
@@ -39,7 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _biographyController = TextEditingController();
     _getCurrentUser();
     _tabController = TabController(length: 2, vsync: this);
-    // _ratings = _getRatings();
   }
 
   @override
@@ -66,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       setState(() {
         _profileImageUrl = '';
       });
-      await loadUserProfile(); 
+      await loadUserProfile();
 
       try {
         final ratingsSnapshot = await _ratings;
@@ -79,7 +76,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       }
     }
   }
-
 
   Future<void> loadUserProfile() async {
     try {
@@ -108,22 +104,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       for (DocumentSnapshot doc in publicationsSnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-        List<int> imageBytes = [];
         String? imageUrl = data['publicationImageUrl'];
-        var timestamp = DateFormat('yyyy-MM-dd HH:mm')
-              .format(data['timestamp'].toDate());
-        var publicationImageUrl = data['publicationImageUrl'] ?? '';
+        var timestamp = DateFormat('yyyy-MM-dd HH:mm').format(data['timestamp'].toDate());
         var description = data['description'] ?? '';
         var title = data['title'] ?? '';
-        var timestamp2 = DateFormat('yyyy-MM-dd HH:mm')
-            .format(data['timestamp'].toDate());
-        var publicationImageUrl2 = data['publicationImageUrl'] ?? '';
-        var description2 = data['description'] ?? '';
-        var title2 = data['title'] ?? '';
-        
-        if (imageUrl != null && imageUrl.isNotEmpty) {
-          imageBytes = base64Decode(imageUrl.split(',').last);
-        }
 
         Widget publicationWidget = Padding(
           padding: const EdgeInsets.all(16.0),
@@ -143,10 +127,17 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   FutureBuilder<ImageProvider?>(
                     future: decodeImage(_profileImageUrl),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState ==
-                              ConnectionState.waiting ||
-                          snapshot.data == null) {
-                        return const CircularProgressIndicator();
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey,
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.data == null) {
+                        return const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey,
+                        );
                       }
                       return CircleAvatar(
                         radius: 20,
@@ -158,9 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      
                       Text(_nameController.text),
-                      
                       Text(
                         timestamp,
                         style: const TextStyle(color: Colors.grey),
@@ -171,12 +160,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
               const SizedBox(height: 8),
               FutureBuilder<ImageProvider?>(
-                future: decodeImage(publicationImageUrl),
-                builder:
-                    (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
-                  if (imageSnapshot.connectionState ==
-                          ConnectionState.waiting ||
-                      imageSnapshot.data == null) {
+                future: decodeImage(imageUrl),
+                builder: (context, AsyncSnapshot<ImageProvider?> imageSnapshot) {
+                  if (imageSnapshot.connectionState == ConnectionState.waiting || imageSnapshot.data == null) {
                     return const CircularProgressIndicator();
                   }
                   double screenWidth = MediaQuery.of(context).size.width;
@@ -209,43 +195,45 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           .set({
         'name': _nameController.text.trim(),
         'biography': _biographyController.text.trim(),
-        'profileImageUrl': _profileImageUrl,
+        'profileImageUrl': _newProfileImageUrl.isNotEmpty ? _newProfileImageUrl : _profileImageUrl,
       });
+
+      setState(() {
+        _profileImageUrl = _newProfileImageUrl.isNotEmpty ? _newProfileImageUrl : _profileImageUrl;
+        _newProfileImageUrl = '';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Profile saved successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
 
       print('User profile updated successfully!');
     } catch (e) {
       print('Error updating user profile: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Error saving profile. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
-  Future<void> uploadImage() async {
-    final XFile? image =
-        await _imagePicker.pickImage(source: ImageSource.gallery);
+  Future<void> selectImage() async {
+    final XFile? image = await _imagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
 
     List<int> imageBytes = await image.readAsBytes();
 
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_currentUser!.uid)
-          .update({
-        'profileImageBytes': imageBytes,
-      });
+    String imageUrl = 'data:image/jpeg;base64,${base64Encode(imageBytes)}';
 
-      setState(() {
-        _profileImageUrl =
-            'data:image/jpeg;base64,${base64Encode(imageBytes)}';
-      });
-
-      if (_avatarKey.currentState != null) {
-        (_avatarKey.currentState as State).setState(() {});
-      }
-
-      print('Image uploaded successfully!');
-    } catch (e) {
-      print('Error uploading image: $e');
-    }
+    setState(() {
+      _newProfileImageUrl = imageUrl;
+    });
   }
 
   Future<void> _signOut() async {
@@ -285,7 +273,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           ],
         ),
       ),
-      
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -297,18 +284,32 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 Center(
                   child: Stack(
                     children: [
-                      CircleAvatar(
-                        key: _avatarKey,
-                        radius: 50,
-                        backgroundImage: _profileImageUrl.isNotEmpty
-                            ? NetworkImage(_profileImageUrl)
-                            : null,
+                      FutureBuilder<ImageProvider?>(
+                        future: decodeImage(_newProfileImageUrl.isNotEmpty ? _newProfileImageUrl : _profileImageUrl),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.grey[200],
+                              child: const CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.data == null) {
+                            return CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.grey[200],
+                            );
+                          }
+                          return CircleAvatar(
+                            radius: 50,
+                            backgroundImage: snapshot.data!,
+                          );
+                        },
                       ),
                       Positioned(
                         bottom: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: uploadImage,
+                          onTap: selectImage,
                           child: const CircleAvatar(
                             radius: 18,
                             backgroundColor: Colors.white,
@@ -322,8 +323,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 const SizedBox(height: 10),
                 Center(
                   child: Text(
-                    'Average Rating: $_rating', // Add your average rating value here
-                    style: TextStyle(
+                    'Average Rating: $_rating',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -337,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -348,7 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
                   ),
                   maxLines: null,
                 ),
@@ -356,7 +357,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 Center(
                   child: ElevatedButton(
                     onPressed: saveProfile,
-                    child: Text('Save'),
+                    child: const Text('Save'),
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -364,7 +365,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         ),
                       ),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
+                        const EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
                       ),
                     ),
                   ),
@@ -373,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 Center(
                   child: ElevatedButton(
                     onPressed: _signOut,
-                    child: Text('Logout'),
+                    child: const Text('Logout'),
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -381,7 +382,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         ),
                       ),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
+                        const EdgeInsets.symmetric(vertical: 15.0, horizontal: 40.0),
                       ),
                     ),
                   ),
@@ -393,9 +394,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             future: loadUserPublications(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Center(child: Text('Error: ${snapshot.error}'));
               } else {
                 return ListView(
                   children: [
@@ -437,8 +438,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddPublicationScreen()),
+                  MaterialPageRoute(builder: (context) => const AddPublicationScreen()),
                 );
               },
             ),
@@ -467,7 +467,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 }
 
-Future<ImageProvider?> decodeImage(String imageUrl) async {
-  List<int> imageBytes = base64Decode(imageUrl.split(',').last);
-  return MemoryImage(Uint8List.fromList(imageBytes));
+Future<ImageProvider?> decodeImage(String? imageUrl) async {
+  if (imageUrl == null || imageUrl.isEmpty) {
+    return const AssetImage('assets/placeholder_image.png');
+  }
+  try {
+    List<int> imageBytes = base64Decode(imageUrl.split(',').last);
+    return MemoryImage(Uint8List.fromList(imageBytes));
+  } catch (error) {
+    print('Error decoding image: $error');
+    return const AssetImage('assets/placeholder_image.png');
+  }
 }
