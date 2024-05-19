@@ -35,7 +35,9 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<String> _distinctPublicationIds = [];
+  List<String> _filteredPublicationIds = [];
 
   @override
   void initState() {
@@ -73,12 +75,58 @@ class _MessageScreenState extends State<MessageScreen> {
 
         setState(() {
           _distinctPublicationIds = distinctPublicationIds.toList();
+          _filteredPublicationIds = _distinctPublicationIds;
         });
       }
     } catch (e) {
       print('Error fetching publication ids: $e');
     }
   }
+
+void _filterConversations(String query) async {
+  if (query.isEmpty) {
+    _getAllPublicationIds();
+  } else {
+    final lowerCaseQuery = query.toLowerCase();
+    final filteredIds = await Future.wait(_distinctPublicationIds.map((publicationId) async {
+      final publicationSnapshot = await FirebaseFirestore.instance
+          .collection('publications')
+          .doc(publicationId)
+          .get();
+
+      if (!publicationSnapshot.exists) return false;
+
+      final publicationData = publicationSnapshot.data();
+      if (publicationData == null) return false;
+      final title = publicationData['title']?.toLowerCase() ?? '';
+      final userId = publicationData['userId'];
+      if (userId == null) return false;
+
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (!userSnapshot.exists) return false;
+
+      final userData = userSnapshot.data();
+      if (userData == null) return false;
+      final name = userData['name']?.toLowerCase() ?? '';
+
+      return title.contains(lowerCaseQuery) || name.contains(lowerCaseQuery);
+    }));
+
+    setState(() {
+      _filteredPublicationIds = [
+        for (int i = 0; i < _distinctPublicationIds.length; i++)
+          if (filteredIds[i]) _distinctPublicationIds[i]
+      ];
+    });
+  }
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +145,31 @@ class _MessageScreenState extends State<MessageScreen> {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: _distinctPublicationIds.length,
-        itemBuilder: (context, index) {
-          return _buildChatTab(_distinctPublicationIds[index]);
-        },
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search conversations',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              onChanged: _filterConversations,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredPublicationIds.length,
+              itemBuilder: (context, index) {
+                return _buildChatTab(_filteredPublicationIds[index]);
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -244,11 +312,11 @@ class _MessageScreenState extends State<MessageScreen> {
               return const Text('User not found');
             }
             final recipientName = userData['name'] as String;
-            final publicationImageUrl = publicationData['publicationImageUrl'] as String?;
+            final publicationImageUrl = publicationData['imageUrl'] as String?;
             final publicationTitle = publicationData['title'] as String;
+
             final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-            final bool isCurrentUserSeller = currentUserUid == userId;
-            if (isCurrentUserSeller) {
+            if (currentUserUid == userId) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -323,7 +391,6 @@ class _MessageScreenState extends State<MessageScreen> {
                 ],
               );
             } else {
-              // If current user is not the seller, display only the seller's name
               return ListTile(
                 contentPadding: const EdgeInsets.all(8.0),
                 title: Text(
