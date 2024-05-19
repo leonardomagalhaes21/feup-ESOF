@@ -11,11 +11,17 @@ class PublicationList extends StatefulWidget {
 
 class _PublicationListState extends State<PublicationList> {
   late TextEditingController _searchController;
+  String _searchText = "";
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _searchController.addListener(() {
+      setState(() {
+        _searchText = _searchController.text;
+      });
+    });
   }
 
   @override
@@ -40,7 +46,6 @@ class _PublicationListState extends State<PublicationList> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            onChanged: _filterPublications,
           ),
         ),
         const SizedBox(height: 8),
@@ -66,32 +71,31 @@ class _PublicationListState extends State<PublicationList> {
                   child: Text('No publications found.'),
                 );
               }
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.docs.length,
+              // Convertendo o texto pesquisado para minúsculas
+              final searchTextLower = _searchText.toLowerCase();
+              final List<QueryDocumentSnapshot> filteredDocs = snapshot.data!.docs
+                  .where((publication) =>
+                      // Comparando o texto pesquisado com o título da publicação em minúsculas
+                      (publication['title'] as String).toLowerCase().contains(searchTextLower))
+                  .toList();
+              return filteredDocs.isEmpty
+                  ? Center(
+                      child: Text('No publications found.'),
+                    )
+                  : ListView.builder(
+                      itemCount: filteredDocs.length,
                       itemBuilder: (context, index) {
-                        var publication = snapshot.data!.docs[index];
+                        var publication = filteredDocs[index];
                         return PublicationItem(
                           publication: publication,
                           userRating: 0,
                         );
                       },
-                    ),
-                  ],
-                ),
-              );
+                    );
             },
           ),
         ),
       ],
     );
-  }
-
-  void _filterPublications(String value) {
-    setState(() {});
   }
 }
