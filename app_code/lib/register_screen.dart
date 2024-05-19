@@ -19,12 +19,12 @@ class RegisterScreen extends StatelessWidget {
           _emailController.text.isEmpty ||
           _passwordController.text.isEmpty ||
           _confirmPasswordController.text.isEmpty) {
-        _showAlertDialog(context, "Preencha todos os campos.");
+        _showAlertDialog(context, "Fill in all fields.");
         return;
       }
 
       if (_passwordController.text != _confirmPasswordController.text) {
-        _showAlertDialog(context, "As senhas não coincidem.");
+        _showAlertDialog(context, "Passwords do not match.");
         return;
       }
 
@@ -48,8 +48,8 @@ class RegisterScreen extends StatelessWidget {
         MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } catch (e) {
-      print("Falha no registro: $e");
-      _showAlertDialog(context, "Falha no registro: $e");
+      print("Registration failed: $e");
+      _showAlertDialog(context, "Registration failed: $e");
     }
   }
 
