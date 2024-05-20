@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
+import 'package:image/image.dart' as img;
 import 'main.dart';
 import 'search_screen.dart';
 import 'message_screen.dart';
@@ -34,21 +35,46 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
   }
 
   Future<void> uploadImage(ImageSource source) async {
-    final XFile? image = await _imagePicker.pickImage(source: source);
-    if (image == null) return;
+    try {
+      final XFile? image = await _imagePicker.pickImage(source: source);
+      if (image == null) return;
 
-    List<int> imageBytes = await image.readAsBytes();
+      List<int> imageBytes = await image.readAsBytes();
 
-    setState(() {
-      _publicationImageUrl = base64Encode(imageBytes);
-    });
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+      if (decodedImage == null) throw Exception("Failed to decode image.");
+
+      if (decodedImage.width > 1080 || decodedImage.height > 1080) {
+        double aspectRatio = decodedImage.width / decodedImage.height;
+
+        int newWidth;
+        int newHeight;
+        if (aspectRatio > 1) {
+          newWidth = 1080;
+          newHeight = (1080 / aspectRatio).toInt();
+        } else {
+          newHeight = 1080;
+          newWidth = (1080 * aspectRatio).toInt();
+        }
+        img.Image resizedImage = img.copyResize(decodedImage, width: newWidth, height: newHeight);
+        imageBytes = img.encodeJpg(resizedImage);
+      }
+
+      setState(() {
+        _publicationImageUrl = base64Encode(imageBytes);
+      });
+    } catch (e) {
+      print('Error processing image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error processing image. Please try again. Try lowering the image quality.')),
+      );
+    }
   }
 
   Future<void> uploadPublication() async {
     try {
       if (_publicationImageUrl.isNotEmpty) {
-        DocumentReference publicationRef =
-            await FirebaseFirestore.instance.collection('publications').add({
+        await FirebaseFirestore.instance.collection('publications').add({
           'title': _titleController.text,
           'description': _descriptionController.text,
           'publicationImageUrl': _publicationImageUrl,
@@ -57,11 +83,17 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
         });
 
         print('Publication uploaded successfully!');
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Publication added sucessfully!')),
+      );
       } else {
         print('Please select an image first.');
       }
     } catch (e) {
       print('Error uploading publication: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading publication. Please try again. Try lowering the image quality.')),
+      );
     }
     setState(() {
       _publicationImageUrl = '';
