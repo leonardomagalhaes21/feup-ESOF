@@ -290,7 +290,7 @@ void _filterConversations(String query) async {
         final publicationData =
             snapshot.data?.data() as Map<String, dynamic>?;
         if (publicationData == null) {
-          return const Text('Publication not found');
+          return Container();
         }
         final userId = publicationData['userId'] as String;
         return FutureBuilder<DocumentSnapshot>(
