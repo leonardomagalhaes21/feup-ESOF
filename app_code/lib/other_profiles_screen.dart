@@ -10,6 +10,7 @@ import 'profile_screen.dart';
 import 'add_publication_screen.dart';
 import 'message_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'search_screen.dart';
 
 class OtherProfiles extends StatefulWidget {
   final String userId;
@@ -194,106 +195,107 @@ class _OtherProfilesState extends State<OtherProfiles> {
                 } else {
                   var userPublications = publicationsSnapshot.data!;
                   return Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (userData['profileImageUrl'] != null)
-                          Center(
-                            child: Column(
+                        Row(
+                          children: [
+                            if (userData['profileImageUrl'] != null)
+                              FutureBuilder<ImageProvider?>(
+                                future: decodeImage(userData['profileImageUrl']),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                          ConnectionState.waiting ||
+                                      snapshot.data == null) {
+                                    return const CircularProgressIndicator();
+                                  }
+                                  return CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: snapshot.data!,
+                                  );
+                                },
+                              ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                FutureBuilder<ImageProvider?>(
-                                  future: decodeImage(userData['profileImageUrl']),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                            ConnectionState.waiting ||
-                                        snapshot.data == null) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    return CircleAvatar(
-                                      radius: 50,
-                                      backgroundImage: snapshot.data!,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 10),
                                 Text(
-                                  'Average Rating: ${_rating.toStringAsFixed(1)}',
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                  userData['name'],
+                                  style: const TextStyle(
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                if (_canRate ?? false) ...[
-                                  const SizedBox(height: 10),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Rate User'),
-                                            content: StatefulBuilder(
-                                              builder: (BuildContext context, StateSetter setState) {
-                                                return Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    RatingBar.builder(
-                                                      initialRating: _lastRating != 0 ? _lastRating : _rating,
-                                                      minRating: 0,
-                                                      direction: Axis.horizontal,
-                                                      allowHalfRating: true,
-                                                      itemCount: 5,
-                                                      itemSize: 30.0,
-                                                      itemBuilder: (context, _) => const Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                      onRatingUpdate: (rating) {
-                                                        setState(() {
-                                                          _lastRating = rating;
-                                                        });
-                                                      },
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        _submitRating(_lastRating);
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text('Submit Rating'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: const Text('Rate'),
+                                Text(
+                                  userData['biography'] ?? 'No biography available',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Average Rating: ${_rating.toStringAsFixed(1)}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
+                                ),
                               ],
                             ),
-                          ),
-                        const SizedBox(height: 20),
-                        Text(
-                          userData['name'],
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.left,
+                            const Spacer(),
+                            if (_canRate ?? false)
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Rate User'),
+                                        content: StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setState) {
+                                            return Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                RatingBar.builder(
+                                                  initialRating: _lastRating != 0 ? _lastRating : _rating,
+                                                  minRating: 0,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: true,
+                                                  itemCount: 5,
+                                                  itemSize: 30.0,
+                                                  itemBuilder: (context, _) => const Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    setState(() {
+                                                      _lastRating = rating;
+                                                    });
+                                                  },
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    _submitRating(_lastRating);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Submit Rating'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text('Rate'),
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          userData['biography'] ?? 'No biography available',
-                          style: const TextStyle(fontSize: 18),
-                          textAlign: TextAlign.left,
-                        ),
-                        const SizedBox(height: 20),
                         const Text(
                           'Publications:',
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         Expanded(
@@ -329,14 +331,14 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                   Text(
                                     publication['title'] ?? '',
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   Text(
                                     publication['description'] ?? '',
-                                    style: const TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                   const SizedBox(height: 20),
                                 ],
@@ -368,7 +370,12 @@ class _OtherProfilesState extends State<OtherProfiles> {
             ),
             IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.add),
@@ -413,7 +420,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
       return Image.memory(
         imageData,
         width: double.infinity,
-        height: 400,
+        height: 300,
         fit: BoxFit.contain,
       );
     } catch (e) {
