@@ -24,12 +24,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ScreenProvider(),
+      create: (context) => ScreenProvider()..checkAuthStatus(),
       child: MaterialApp(
         title: 'FEUP-reUSE',
         home: Consumer<ScreenProvider>(
           builder: (context, screenProvider, _) {
-            return screenProvider.currentScreen;
+            return FutureBuilder(
+              future: screenProvider.checkAuthStatus(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  return screenProvider.currentScreen;
+                }
+              },
+            );
           },
         ),
       ),
@@ -45,6 +54,27 @@ class ScreenProvider with ChangeNotifier {
   void setScreen(Widget screen) {
     _currentScreen = screen;
     notifyListeners();
+  }
+
+  Future<void> checkAuthStatus() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _currentScreen = LoginScreen();
+    } else {
+      _currentScreen = MainScreen();
+    }
+    notifyListeners();
+  }
+
+  ScreenProvider() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        _currentScreen = LoginScreen();
+      } else {
+        _currentScreen = MainScreen();
+      }
+      notifyListeners();
+    });
   }
 }
 
