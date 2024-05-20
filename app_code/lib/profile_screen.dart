@@ -114,12 +114,23 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () async {
+                      await deletePublication(doc.id);
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               Row(
@@ -184,6 +195,27 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     } catch (e) {
       print('Error loading user publications: $e');
       return [];
+    }
+  }
+
+  Future<void> deletePublication(String publicationId) async {
+    try {
+      await FirebaseFirestore.instance.collection('publications').doc(publicationId).delete();
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Publication deleted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Error deleting publication: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Error deleting publication. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
