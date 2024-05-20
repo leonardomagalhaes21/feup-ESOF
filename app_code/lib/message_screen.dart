@@ -312,7 +312,7 @@ void _filterConversations(String query) async {
               return const Text('User not found');
             }
             final recipientName = userData['name'] as String;
-            final publicationImageUrl = publicationData['imageUrl'] as String?;
+            final publicationImageUrl = publicationData['publicationImageUrl'] as String?;
             final publicationTitle = publicationData['title'] as String;
 
             final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
