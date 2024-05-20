@@ -26,12 +26,9 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textEditingController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController();
   late Stream<List<ChatMessage>> _messagesStream;
   late Map<String, String> _userNames = {};
   String? _publicationTitle;
-  List<ChatMessage> _allMessages = [];
-  List<ChatMessage> _filteredMessages = [];
 
   @override
   void initState() {
@@ -130,21 +127,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _filterMessages(String query) {
-    setState(() {
-      _filteredMessages = _allMessages.where((message) {
-        final senderName = _userNames[message.sender]?.toLowerCase() ?? '';
-        final messageContent = message.content.toLowerCase();
-        final publicationTitle = _publicationTitle?.toLowerCase() ?? '';
-        final searchQuery = query.toLowerCase();
-
-        return senderName.contains(searchQuery) ||
-            messageContent.contains(searchQuery) ||
-            publicationTitle.contains(searchQuery);
-      }).toList();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,26 +134,6 @@ class _ChatScreenState extends State<ChatScreen> {
         title: _publicationTitle != null
             ? Text('$_publicationTitle - Chat with ${widget.recipientName}')
             : Text('Chat with ${widget.recipientName}'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search messages...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: _filterMessages,
-            ),
-          ),
-        ),
       ),
       body: Column(
         children: [
@@ -186,15 +148,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
-                  _allMessages = snapshot.data ?? [];
-                  _filteredMessages = _filteredMessages.isNotEmpty || _searchController.text.isNotEmpty
-                      ? _filteredMessages
-                      : _allMessages;
+                  List<ChatMessage> messages = snapshot.data ?? [];
                   return ListView.builder(
                     reverse: true,
-                    itemCount: _filteredMessages.length,
+                    itemCount: messages.length,
                     itemBuilder: (context, index) {
-                      final message = _filteredMessages[index];
+                      final message = messages[index];
                       final isCurrentUser = message.sender == FirebaseAuth.instance.currentUser?.uid;
 
                       return Padding(
@@ -333,20 +292,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-}
-
-class ChatMessage {
-  final String sender;
-  final String receiver;
-  final String content;
-  final DateTime timestamp;
-  final String? publicationId;
-
-  ChatMessage({
-    required this.sender,
-    required this.receiver,
-    required this.content,
-    required this.timestamp,
-    this.publicationId,
-  });
 }
