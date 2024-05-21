@@ -210,7 +210,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<ImageProvider?> decodeImage(String? imageUrl) async {
-    if (imageUrl == null) {
+    if (imageUrl == null || imageUrl.isEmpty) {
       return const AssetImage('assets/placeholder_image.png');
     }
     try {
