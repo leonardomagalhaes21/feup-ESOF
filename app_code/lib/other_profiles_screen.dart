@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -23,11 +22,12 @@ class OtherProfiles extends StatefulWidget {
 
 class _OtherProfilesState extends State<OtherProfiles> {
   late Future<DocumentSnapshot<Map<String, dynamic>>> _userProfile;
-  double _rating = 0; // Rating given by the current user
-  double _lastRating = 0; // Last rating given by the current user
+  double _rating = 0;
+  double _lastRating = 0;
+  int _totalRatings = 0;
   late Future<QuerySnapshot<Map<String, dynamic>>> _userPublications;
   late Future<QuerySnapshot<Map<String, dynamic>>> _ratings;
-  late bool _canRate; // Flag to indicate if the current user can rate the profile
+  late bool _canRate;
 
   @override
   void initState() {
@@ -45,6 +45,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
       final newRating = _calculateAverageRating(ratingsSnapshot);
       setState(() {
         _rating = newRating;
+        _totalRatings = ratingsSnapshot.size;
       });
     } catch (e) {
       print('Error getting data: $e');
@@ -116,7 +117,7 @@ class _OtherProfilesState extends State<OtherProfiles> {
     if (ratingsSnapshot.size == 0) {
       return 0.0;
     }
-    
+
     double totalRating = 0;
     for (var ratingDoc in ratingsSnapshot.docs) {
       totalRating += ratingDoc.data()['rating'];
@@ -234,6 +235,13 @@ class _OtherProfilesState extends State<OtherProfiles> {
                                 const SizedBox(height: 5),
                                 Text(
                                   'Average Rating: ${_rating.toStringAsFixed(1)}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '$_totalRatings ratings',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
