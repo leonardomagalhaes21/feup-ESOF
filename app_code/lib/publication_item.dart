@@ -160,13 +160,16 @@ class PublicationItem extends StatelessWidget {
         .get();
   }
 
-  Future<ImageProvider?> decodeImage(String imageUrl) async {
+  Future<ImageProvider?> decodeImage(String? imageUrl) async {
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return const AssetImage('assets/placeholder_image.png');
+    }
     try {
       List<int> imageBytes = base64Decode(imageUrl.split(',').last);
       return MemoryImage(Uint8List.fromList(imageBytes));
     } catch (error) {
       print('Error decoding image: $error');
-      return null;
+      return const AssetImage('assets/placeholder_image.png');
     }
   }
 }
