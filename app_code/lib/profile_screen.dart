@@ -200,14 +200,40 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Future<void> deletePublication(String publicationId) async {
     try {
-      await FirebaseFirestore.instance.collection('publications').doc(publicationId).delete();
-      setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Publication deleted successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      bool confirmDelete = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Confirm Delete"),
+            content: Text("Are you sure you want to delete this publication?"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text("Delete"),
+              ),
+            ],
+          );
+        },
       );
+
+      if (confirmDelete == true) {
+        await FirebaseFirestore.instance.collection('publications').doc(publicationId).delete();
+        setState(() {});
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Publication deleted successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
       print('Error deleting publication: $e');
       ScaffoldMessenger.of(context).showSnackBar(
