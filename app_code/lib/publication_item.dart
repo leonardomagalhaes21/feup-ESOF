@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image/image.dart' as img;
 import 'chat_screen.dart';
 
 class PublicationItem extends StatelessWidget {
@@ -176,19 +175,6 @@ class PublicationItem extends StatelessWidget {
 
   Future<ImageProvider?> decodeImage(String imageUrl) async {
     List<int> imageBytes = base64Decode(imageUrl.split(',').last);
-    img.Image? originalImage = img.decodeImage(imageBytes);
-
-    if (originalImage == null) {
-      return null;
-    }
-
-    if (originalImage.width > 1920 || originalImage.height > 1080) {
-      img.Image resizedImage = img.copyResize(originalImage,
-          width: originalImage.width > 1920 ? 1920 : null,
-          height: originalImage.height > 1080 ? 1080 : null);
-      imageBytes = img.encodePng(resizedImage);
-    }
-
     return MemoryImage(Uint8List.fromList(imageBytes));
   }
 }
