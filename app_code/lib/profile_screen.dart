@@ -485,12 +485,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
             IconButton(
               icon: const Icon(Icons.person),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                );
-              },
+              onPressed: () {},
             ),
           ],
         ),

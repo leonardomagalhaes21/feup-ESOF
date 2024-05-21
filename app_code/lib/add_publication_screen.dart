@@ -240,13 +240,7 @@ class _AddPublicationScreenState extends State<AddPublicationScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddPublicationScreen()),
-                );
-              },
+              onPressed: () {},
             ),
             IconButton(
               icon: const Icon(Icons.message),
