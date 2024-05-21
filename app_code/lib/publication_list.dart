@@ -32,25 +32,25 @@ class _PublicationListState extends State<PublicationList> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: 'Search by title',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
+    return SingleChildScrollView( 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search by title',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: StreamBuilder<QuerySnapshot>(
+          const SizedBox(height: 8),
+          StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('publications')
                 .orderBy('timestamp', descending: true)
@@ -71,31 +71,31 @@ class _PublicationListState extends State<PublicationList> {
                   child: Text('No publications found.'),
                 );
               }
-              // Convertendo o texto pesquisado para minúsculas
               final searchTextLower = _searchText.toLowerCase();
               final List<QueryDocumentSnapshot> filteredDocs = snapshot.data!.docs
                   .where((publication) =>
-                      // Comparando o texto pesquisado com o título da publicação em minúsculas
                       (publication['title'] as String).toLowerCase().contains(searchTextLower))
                   .toList();
               return filteredDocs.isEmpty
                   ? Center(
-                      child: Text('No publications found.'),
-                    )
+                child: Text('No publications found.'),
+              )
                   : ListView.builder(
-                      itemCount: filteredDocs.length,
-                      itemBuilder: (context, index) {
-                        var publication = filteredDocs[index];
-                        return PublicationItem(
-                          publication: publication,
-                          userRating: 0,
-                        );
-                      },
-                    );
+                shrinkWrap: true, 
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: filteredDocs.length,
+                itemBuilder: (context, index) {
+                  var publication = filteredDocs[index];
+                  return PublicationItem(
+                    publication: publication,
+                    userRating: 0,
+                  );
+                },
+              );
             },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
