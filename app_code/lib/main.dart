@@ -89,14 +89,16 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Text(
-          "FEUP-reUSE",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-            fontFamily: GoogleFonts.oswald().fontFamily,
+        title: Center(
+          child: Text(
+            "FEUP-reUSE",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+              fontFamily: GoogleFonts.oswald().fontFamily,
+            ),
           ),
         ),
       ),
