@@ -120,7 +120,7 @@ You can find below information and references related with the project managemen
 - [Iteration 0](#iteration-0)
 - [Iteration 1](#iteration-1)
 - [Iteration 2](#iteration-2)
-- [Iteration 3]()
+- [Iteration 3](#iteration-3)
 
 
 ### Iteration planning and retrospectives:
@@ -190,5 +190,30 @@ You can find below information and references related with the project managemen
 > 
 > 
  
+## Iteration 3
 
+> ## Plans:
+> ### Development Board
+> <p>Start:</p>
+> <img src="/images/BacklogIteration3Start.png">
+> <br>
+> <p>End:</p>
+> <img src="/images/BacklogIteration3End.png">
+>
+> ### Retrospective
+> <p>During this sprint, our team showcased remarkable adaptability, swiftly adjusting to unexpected challenges and maintaining a steady pace towards our objectives. Communication remained transparent and consistent, fostering a sense of unity and purpose among team members. These strengths were instrumental in overcoming obstacles and driving the project forward with efficiency and precision.</p>
+>
+> ## Start
+> 
+> <p>As we review our sprint, it's clear that our team displayed admirable collaboration and met our objectives. However, there are areas where our processes require refinement. We need to prioritize "smoothing edges," emphasizing the importance of attention to detail. This means ensuring that even the smallest details are functioning effectively in our project. </p>
+>
+> ## Continue
+> <p>Continue upholding the exceptional level of collaboration within the team, ensuring both clear communication and alignment. Additionally, concentrate on efficiently delivering key features and meeting sprint goals.</p>
+> 
+>
+> ## Stop
+> <p>Let's ensure we don't overlook the user experience. It's vital to prioritize enhancing this aspect in future sprints to ensure our users are not just satisfied, but delighted with our product.</p>
+> 
+> 
+ 
  
