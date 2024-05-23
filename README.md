@@ -201,18 +201,18 @@ You can find below information and references related with the project managemen
 > <img src="/images/BacklogIteration3End.png">
 >
 > ### Retrospective
-> <p>During this sprint, our team showcased remarkable adaptability, swiftly adjusting to unexpected challenges and maintaining a steady pace towards our objectives. Communication remained transparent and consistent, fostering a sense of unity and purpose among team members. These strengths were instrumental in overcoming obstacles and driving the project forward with efficiency and precision.</p>
+> <p>During this sprint, our team demonstrated exceptional adaptability and efficiency. Despite it being a straightforward sprint, we managed to swiftly address one bug and implement some minor changes. Our ability to maintain a steady pace and focus on our objectives resulted in an outstanding outcome, leaving the app in a magnificent state. Communication was transparent and consistent, reinforcing a strong sense of unity and purpose among team members. These strengths were crucial in overcoming the challenges we faced and driving the project forward with precision.</p>
 >
 > ## Start
 > 
-> <p>As we review our sprint, it's clear that our team displayed admirable collaboration and met our objectives. However, there are areas where our processes require refinement. We need to prioritize "smoothing edges," emphasizing the importance of attention to detail. This means ensuring that even the smallest details are functioning effectively in our project. </p>
+> <p>Reflecting on this sprint, our team's collaboration was exemplary, and we successfully met our objectives. Moving forward, we should focus on refining our processes further. Emphasizing attention to detail will be crucial—ensuring that even the smallest aspects of the project function flawlessly will enhance the overall quality of the app.</p>
 >
 > ## Continue
-> <p>Continue upholding the exceptional level of collaboration within the team, ensuring both clear communication and alignment. Additionally, concentrate on efficiently delivering key features and meeting sprint goals.</p>
+> <p>We should continue to uphold the exceptional level of collaboration within the team, ensuring clear communication and alignment. Additionally, maintaining our efficiency in delivering key features and consistently meeting sprint goals will be essential to our ongoing success.</p>
 > 
 >
 > ## Stop
-> <p>Let's ensure we don't overlook the user experience. It's vital to prioritize enhancing this aspect in future sprints to ensure our users are not just satisfied, but delighted with our product.</p>
+> <p>It's important to ensure that we don't overlook the user experience. In future sprints, prioritizing enhancements to this aspect will be vital. Our goal should be to not only satisfy our users but to delight them with a seamless and enjoyable product experience.</p>
 > 
 > 
  
