@@ -28,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   final ImagePicker _imagePicker = ImagePicker();
   User? _currentUser;
   late Future<QuerySnapshot<Map<String, dynamic>>> _ratings;
-  double _rating = 0;
+
 
   @override
   void initState() {
@@ -65,15 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       });
       await loadUserProfile();
 
-      try {
-        final ratingsSnapshot = await _ratings;
-        final newRating = _calculateAverageRating(ratingsSnapshot);
-        setState(() {
-          _rating = newRating;
-        });
-      } catch (e) {
-        print('Error getting data: $e');
-      }
+      
     }
   }
 
@@ -313,14 +305,16 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color.fromRGBO(240, 240, 240, 1),
-        title: Text(
-          "FEUP-reUSE",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-            fontFamily: GoogleFonts.oswald().fontFamily,
+        title: Center(
+          child: Text(
+            "FEUP-reUSE",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+              fontFamily: GoogleFonts.oswald().fontFamily,
+            ),
           ),
         ),
         bottom: TabBar(
@@ -378,16 +372,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                Center(
-                  child: Text(
-                    'Average Rating: $_rating',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                
+                
                 const SizedBox(height: 20),
                 TextField(
                   controller: _nameController,
