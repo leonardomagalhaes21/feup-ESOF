@@ -109,7 +109,7 @@ Moreover, Feup-reUSE has access to the local files stored on the user's smartpho
 
 ### Preview
 
-![Preview](/images/preview2.gif)
+<img src="/images/preview2.gif" width="300" height="533"/>
 
 ## Project management
 You can find below information and references related with the project management in our team: 
