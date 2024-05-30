@@ -14,7 +14,7 @@ You can find here details about the app, from a high-level vision to low-level i
 * [Architecture and Design](#Architecture-And-Design)
   * [Logical architecture](#Logical-Architecture)
   * [Physical architecture](#Physical-Architecture)
-  * [Vertical prototype](#Vertical-Prototype)
+  * [Preview](#Preview)
 * [Project management](#Project-Management)
 
 Contributions are expected to be made exclusively by the initial team, but we may open them to the community, after the course, in all areas and topics: requirements, technologies, development, experimentation, testing, etc.
